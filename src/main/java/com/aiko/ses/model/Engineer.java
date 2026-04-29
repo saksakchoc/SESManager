@@ -1,4 +1,65 @@
 package com.aiko.ses.model;
+import java.util.ArrayList;
+import java.util.List;
 
+/* エンジニアクラス
+ * エンジニアの固有情報を保持
+ */
 public class Engineer {
+    private static int counter = 0; // id取得用カウンタ
+    private final int id;
+    private final String name;
+    private final List<String> skills = new ArrayList<>();
+    private final int price;
+    /* コンストラクタ
+     * 名前と単価は必須 */
+    public Engineer(String name, int price, String... skills) {
+        this.id = counter++;
+        this.name = name;
+        this.price = price;
+        for (String skill: skills) {
+            this.skills.add(skill);
+        }
+    }
+    public Engineer(String name, int price) {
+        this.id = counter++;
+        this.name = name;
+        this.price = price;
+    }
+    public int getId() {
+        return this.id;
+    }
+    public String getName() {
+        return this.name;
+    }
+    public int getPrice() {
+        return this.price;
+    }
+    /* スキルリストを返す
+     * ArrayListを隠蔽するため、コピーを渡す */
+    public List<String> getSkills() {
+        return List.copyOf(skills);
+    }
+    /* 入力されたスキルを保有するかどうかを判定
+     * 保有する場合trueを返す */
+    public boolean hasSkill(String skill) {
+        for (String s: this.skills) {
+            if (s.equals(skill)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public boolean canParticipateIn(Project project) {
+        // Projectクラス実装後に見直す
+        if (project.isRecruiting() && project.isWithinPrice(this.price)) {
+            for (String skill: project.getSkills()) {
+                if (!hasSkill(skill)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
 }
