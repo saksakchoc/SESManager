@@ -14,9 +14,7 @@ public class Engineer {
     /* コンストラクタ
      * 名前と単価は必須 */
     public Engineer(String name, int price, String... skills) {
-        this.id = counter++;
-        this.name = name;
-        this.price = price;
+        this(name, price);
         for (String skill: skills) {
             this.skills.add(skill);
         }
