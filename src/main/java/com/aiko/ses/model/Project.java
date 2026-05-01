@@ -27,6 +27,13 @@ public class Project {
         }
     }
     public Project(String name, int minPrice, int maxPrice, LocalDate startDate, LocalDate endDate) {
+        if (minPrice > maxPrice) {
+            throw new IllegalArgumentException("案件の単価上下限が不正です");
+        }
+        if (endDate.isBefore(startDate)) {
+            throw new IllegalArgumentException("案件の開始終了日が不正です");
+        }
+
         this.id = counter++;
         this.name = name;
         this.minPrice = minPrice;
@@ -72,7 +79,7 @@ public class Project {
     }
     public boolean isRecruiting() {
         LocalDate today = LocalDate.now();
-        return (status == RecruitingStatus.RECRUITING) && today.isBefore(this.startDate);
+        return (status == RecruitingStatus.RECRUITING);
     }
     public boolean isWithinPrice(int price) {
         return price >= minPrice && price <= maxPrice;
