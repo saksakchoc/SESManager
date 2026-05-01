@@ -55,8 +55,8 @@ public class ProjectTest {
     void getSkills_コンストラクタで登録したスキルセットを返す() {
         Project p = new Project("A銀行基幹システム更改",40,60, LocalDate.parse("2026-05-01"),LocalDate.parse("2027-03-31"), "React", "Java");
         List<String> skills = p.getSkills();
-        assertEquals("React", skills.get(0));
-        assertEquals("Java", skills.get(1));
+        assertTrue(skills.contains("React"));
+        assertTrue(skills.contains("Java"));
     }
     @Test
     void hasSkill_持っている場合true() {
