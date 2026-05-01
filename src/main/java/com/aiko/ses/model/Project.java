@@ -3,8 +3,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-/* エンジニアクラス
- * エンジニアの固有情報を保持
+/* 案件クラス
+ * 案件の固有情報を保持
  */
 public class Project {
     public enum RecruitingStatus{RECRUITING, CLOSED};
@@ -78,7 +78,6 @@ public class Project {
         return false;
     }
     public boolean isRecruiting() {
-        LocalDate today = LocalDate.now();
         return (status == RecruitingStatus.RECRUITING);
     }
     public boolean isWithinPrice(int price) {
