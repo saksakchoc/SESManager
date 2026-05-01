@@ -1,0 +1,80 @@
+package com.aiko.ses.model;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+
+/* エンジニアクラス
+ * エンジニアの固有情報を保持
+ */
+public class Project {
+    public enum RecruitingStatus{RECRUITING, CLOSED};
+    private static int counter = 0; // id取得用カウンタ
+    private final int id;
+    private final String name;
+    private final List<String> skills = new ArrayList<>();
+    private final int minPrice;
+    private final int maxPrice;
+    private final LocalDate startDate;
+    private final LocalDate endDate;
+    private RecruitingStatus status = RecruitingStatus.CLOSED;
+
+    /* コンストラクタ
+     * 名前と単価は必須 */
+    public Project(String name, int minPrice, int maxPrice, LocalDate startDate, LocalDate endDate, String... skills) {
+        this(name, minPrice, maxPrice, startDate, endDate);
+        for (String skill: skills) {
+            this.skills.add(skill);
+        }
+    }
+    public Project(String name, int minPrice, int maxPrice, LocalDate startDate, LocalDate endDate) {
+        this.id = counter++;
+        this.name = name;
+        this.minPrice = minPrice;
+        this.maxPrice = maxPrice;
+        this.startDate = startDate;
+        this.endDate = endDate;
+    }
+    public void setRecruitingStatus(RecruitingStatus rs) {
+        this.status = rs;
+    }
+    public int getId() {
+        return this.id;
+    }
+    public String getName() {
+        return this.name;
+    }
+    public int getMinPrice() {
+        return this.minPrice;
+    }
+    public int getMaxPrice() {
+        return this.maxPrice;
+    }
+    public LocalDate getStartDate() {
+        return startDate;
+    }
+    public LocalDate getEndDate() {
+        return endDate;
+    }
+    /* スキルリストを返す
+     * ArrayListを隠蔽するため、コピーを渡す */
+    public List<String> getSkills() {
+        return List.copyOf(skills);
+    }
+    /* 入力されたスキルを保有するかどうかを判定
+     * 保有する場合trueを返す */
+    public boolean hasSkill(String skill) {
+        for (String s: this.skills) {
+            if (s.equals(skill)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public boolean isRecruiting() {
+        LocalDate today = LocalDate.now();
+        return (status == RecruitingStatus.RECRUITING) && today.isBefore(this.startDate);
+    }
+    public boolean isWithinPrice(int price) {
+        return price >= minPrice && price <= maxPrice;
+    }
+}
