@@ -1,6 +1,7 @@
 package com.aiko.ses.model;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /* 案件クラス
@@ -8,7 +9,6 @@ import java.util.List;
  */
 public class Project {
     public enum RecruitingStatus{RECRUITING, CLOSED};
-    private static int counter = 0; // id取得用カウンタ
     private final int id;
     private final String name;
     private final List<String> skills = new ArrayList<>();
@@ -20,21 +20,18 @@ public class Project {
 
     /* コンストラクタ
      * 名前と単価は必須 */
-    public Project(String name, int minPrice, int maxPrice, LocalDate startDate, LocalDate endDate, String... skills) {
-        this(name, minPrice, maxPrice, startDate, endDate);
-        for (String skill: skills) {
-            this.skills.add(skill);
-        }
+    public Project(int id, String name, int minPrice, int maxPrice, LocalDate startDate, LocalDate endDate, String... skills) {
+        this(id, name, minPrice, maxPrice, startDate, endDate);
+        this.skills.addAll(Arrays.asList(skills));
     }
-    public Project(String name, int minPrice, int maxPrice, LocalDate startDate, LocalDate endDate) {
+    public Project(int id, String name, int minPrice, int maxPrice, LocalDate startDate, LocalDate endDate) {
         if (minPrice > maxPrice) {
             throw new IllegalArgumentException("案件の単価上下限が不正です");
         }
         if (endDate.isBefore(startDate)) {
             throw new IllegalArgumentException("案件の開始終了日が不正です");
         }
-
-        this.id = counter++;
+        this.id = id;
         this.name = name;
         this.minPrice = minPrice;
         this.maxPrice = maxPrice;
