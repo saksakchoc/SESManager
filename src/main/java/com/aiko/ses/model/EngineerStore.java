@@ -2,7 +2,7 @@ package com.aiko.ses.model;
 import java.util.ArrayList;
 
 public class EngineerStore {
-    private ArrayList<Engineer> engineers = new ArrayList<>();
+    private final ArrayList<Engineer> engineers = new ArrayList<>();
 
     public Engineer getEngineer(int id) {
         for (Engineer engineer: engineers) {
