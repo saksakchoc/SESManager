@@ -6,21 +6,20 @@ import java.util.List;
  * エンジニアの固有情報を保持
  */
 public class Engineer {
-    private static int counter = 0; // id取得用カウンタ
     private final int id;
     private final String name;
     private final List<String> skills = new ArrayList<>();
     private final int price;
     /* コンストラクタ
      * 名前と単価は必須 */
-    public Engineer(String name, int price, String... skills) {
-        this(name, price);
+    public Engineer(int id, String name, int price, String... skills) {
+        this(id, name, price);
         for (String skill: skills) {
             this.skills.add(skill);
         }
     }
-    public Engineer(String name, int price) {
-        this.id = counter++;
+    public Engineer(int id, String name, int price) {
+        this.id = id;
         this.name = name;
         this.price = price;
     }
