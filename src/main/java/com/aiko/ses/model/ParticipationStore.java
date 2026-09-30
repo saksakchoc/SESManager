@@ -1,9 +1,14 @@
 package com.aiko.ses.model;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.List;
 
 public class ParticipationStore {
     private final ArrayList<Participation> participations = new ArrayList<>();
+
+    public List<Participation> getParticipations() {
+        return List.copyOf(participations);
+    }
 
     public Participation getParticipation(int id) {
         for (Participation participation: participations) {
