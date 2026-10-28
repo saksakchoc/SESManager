@@ -16,7 +16,7 @@ public class Project {
     private final int maxPrice;
     private final LocalDate startDate;
     private final LocalDate endDate;
-    private RecruitingStatus status = RecruitingStatus.CLOSED;
+    private RecruitingStatus status = RecruitingStatus.RECRUITING;
 
     /* コンストラクタ
      * 名前と単価は必須 */
@@ -37,9 +37,13 @@ public class Project {
         this.maxPrice = maxPrice;
         this.startDate = startDate;
         this.endDate = endDate;
-        if (isRecruiting) {
-            this.status = RecruitingStatus.RECRUITING;
+        if (!isRecruiting) {
+            this.status = RecruitingStatus.CLOSED;
         }
+    }
+    public Project(int id, String name, int minPrice, int maxPrice, LocalDate startDate, LocalDate endDate, String... skills) {
+        /* 募集中の案件として作成 */
+        this(id, name, minPrice, maxPrice, startDate, endDate, true, skills);
     }
     public void setRecruitingStatus(RecruitingStatus rs) {
         this.status = rs;

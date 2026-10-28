@@ -13,20 +13,14 @@ public class AssignService {
                 .filter(p -> p.getEngineer() == e)
                 .toList();
     }
-
-    public boolean isAvailableByDay(Engineer e, LocalDate date) {
-        /* エンジニアが全期間で参画されている案件一覧を取得する */
-        List<Participation> participationList = this.getEngineerParticipation(e);
-        /* 参画されている案件のうち、対象日が開始日～終了日に含まれる要素を取得する */
-        return participationList.stream()
-                .filter(p -> !p.getStartDate().isAfter(date) && !p.getEndDate().isBefore(date))
-                .toList()
-                .isEmpty();
-    }
     public boolean isAvailableByPeriod(Engineer e, LocalDate startDate, LocalDate endDate) {
+        /* 開始日 <= 終了日でなければエラー */
+        if (!endDate.isAfter(startDate)) {
+            throw new IllegalArgumentException("判定期間の開始終了日が不正です");
+        }
         /* エンジニアが全期間で参画されている案件一覧を取得する */
         List<Participation> participationList = this.getEngineerParticipation(e);
-        /* 参画されている案件のうち、対象期間と参画期間が重複する要素を取得する */
+        /* 参画されている案件のうち、対象期間と参画期間が重複する要素を取得し、存在しなければtrueを返す */
         return participationList.stream()
                 .filter(p -> !(p.getEndDate().isBefore(startDate) || p.getStartDate().isAfter(endDate)))
                 .toList()

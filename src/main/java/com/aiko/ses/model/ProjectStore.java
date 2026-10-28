@@ -20,8 +20,16 @@ public class ProjectStore {
 
     public Project createProject(String name, int minPrice, int maxPrice, LocalDate startDate, LocalDate endDate, String... skills) {
         int id = countProjects() + 1;
-        Project Project = new Project(id, name, minPrice, maxPrice, startDate, endDate, skills);
-        projects.add(Project);
-        return Project;
+        Project project = new Project(id, name, minPrice, maxPrice, startDate, endDate, skills);
+        projects.add(project);
+        return project;
+    }
+    public Project createProject(String name, int minPrice, int maxPrice, LocalDate startDate, LocalDate endDate, boolean isRecruiting, String... skills) {
+        Project project = this.createProject(name, minPrice, maxPrice, startDate, endDate, skills);
+        /* 募集状態がクローズ */
+        if (!isRecruiting) {
+            project.setRecruitingStatus(Project.RecruitingStatus.CLOSED);
+        }
+        return project;
     }
 }
