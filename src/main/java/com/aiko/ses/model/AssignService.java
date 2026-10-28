@@ -15,7 +15,7 @@ public class AssignService {
     }
     public boolean isAvailableByPeriod(Engineer e, LocalDate startDate, LocalDate endDate) {
         /* 開始日 <= 終了日でなければエラー */
-        if (!endDate.isAfter(startDate)) {
+        if (endDate.isBefore(startDate)) {
             throw new IllegalArgumentException("判定期間の開始終了日が不正です");
         }
         /* エンジニアが全期間で参画されている案件一覧を取得する */
