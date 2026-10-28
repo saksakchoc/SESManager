@@ -47,16 +47,4 @@ public class Engineer {
         }
         return false;
     }
-    public boolean canParticipateIn(Project project) {
-        // Projectクラス実装後に見直す
-        if (project.isRecruiting() && project.isWithinPrice(this.price)) {
-            for (String skill: project.getSkills()) {
-                if (!hasSkill(skill)) {
-                    return false;
-                }
-            }
-            return true;
-        }
-        return false;
-    }
 }
