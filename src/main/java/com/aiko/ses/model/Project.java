@@ -20,11 +20,11 @@ public class Project {
 
     /* コンストラクタ
      * 名前と単価は必須 */
-    public Project(int id, String name, int minPrice, int maxPrice, LocalDate startDate, LocalDate endDate, String... skills) {
-        this(id, name, minPrice, maxPrice, startDate, endDate);
+    public Project(int id, String name, int minPrice, int maxPrice, LocalDate startDate, LocalDate endDate, boolean isRecruiting, String... skills) {
+        this(id, name, minPrice, maxPrice, startDate, endDate, isRecruiting);
         this.skills.addAll(Arrays.asList(skills));
     }
-    public Project(int id, String name, int minPrice, int maxPrice, LocalDate startDate, LocalDate endDate) {
+    public Project(int id, String name, int minPrice, int maxPrice, LocalDate startDate, LocalDate endDate, boolean isRecruiting) {
         if (minPrice > maxPrice) {
             throw new IllegalArgumentException("案件の単価上下限が不正です");
         }
@@ -37,6 +37,9 @@ public class Project {
         this.maxPrice = maxPrice;
         this.startDate = startDate;
         this.endDate = endDate;
+        if (isRecruiting) {
+            this.status = RecruitingStatus.RECRUITING;
+        }
     }
     public void setRecruitingStatus(RecruitingStatus rs) {
         this.status = rs;
