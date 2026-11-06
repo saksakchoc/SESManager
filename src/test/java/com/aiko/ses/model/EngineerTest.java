@@ -1,9 +1,6 @@
 package com.aiko.ses.model;
 import org.junit.jupiter.api.Test;
-
-import java.time.LocalDate;
 import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 class EngineerTest {
@@ -33,6 +30,12 @@ class EngineerTest {
         });
     }
     @Test
+    void getId_コンストラクタで登録したIdを返す() {
+        int engineerId = 1;
+        Engineer e = new Engineer(engineerId,"あいこ", 45, "React", "Java");
+        assertEquals(engineerId, e.getId());
+    }
+    @Test
     void getName_コンストラクタで登録した名前を返す() {
         String engineerName = "あいこ";
         Engineer e = new Engineer(1,engineerName, 45, "React", "Java");
@@ -58,21 +61,32 @@ class EngineerTest {
         assertEquals(0, skills.size());
     }
     @Test
-    void Constractor_氏名が空文字() {
+    void Constructor_氏名がnull() {
+        assertThrows(NullPointerException.class, () -> {
+            new Engineer(1,null, 45);
+        });
+    }
+    @Test
+    void Constructor_氏名が空文字() {
         assertThrows(IllegalArgumentException.class, () -> {
             new Engineer(1,"", 45);
         });
     }
     @Test
-    void Constractor_目安単価が0() {
+    void Constructor_目安単価がマイナス() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            new Engineer(1,"あいこ", -100);
+        });
+    }
+    @Test
+    void Constructor_目安単価が0() {
         assertThrows(IllegalArgumentException.class, () -> {
             new Engineer(1,"あいこ", 0);
         });
     }
     @Test
-    void Constractor_目安単価がマイナス() {
-        assertThrows(IllegalArgumentException.class, () -> {
-            new Engineer(1,"あいこ", -100);
-        });
+    void Constructor_目安単価が1() {
+        Engineer e = new Engineer(1,"あいこ", 1);
+        assertEquals(1,e.getPrice());
     }
 }
