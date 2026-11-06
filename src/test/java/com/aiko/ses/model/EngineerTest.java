@@ -57,4 +57,22 @@ class EngineerTest {
         List<String> skills = e.getSkills();
         assertEquals(0, skills.size());
     }
+    @Test
+    void Constractor_氏名が空文字() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            new Engineer(1,"", 45);
+        });
+    }
+    @Test
+    void Constractor_目安単価が0() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            new Engineer(1,"あいこ", 0);
+        });
+    }
+    @Test
+    void Constractor_目安単価がマイナス() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            new Engineer(1,"あいこ", -100);
+        });
+    }
 }

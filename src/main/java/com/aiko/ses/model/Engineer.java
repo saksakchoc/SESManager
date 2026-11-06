@@ -19,6 +19,12 @@ public class Engineer {
         }
     }
     public Engineer(int id, String name, int price) {
+        if (name.isEmpty()) {
+            throw new IllegalArgumentException("エンジニア氏名が空欄です");
+        }
+        if (price < 1) {
+            throw new IllegalArgumentException("目安単価の値が不正です");
+        }
         this.id = id;
         this.name = name;
         this.price = price;
