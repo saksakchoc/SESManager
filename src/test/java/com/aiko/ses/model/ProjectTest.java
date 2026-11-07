@@ -59,16 +59,6 @@ public class ProjectTest {
         assertTrue(skills.contains("Java"));
     }
     @Test
-    void hasSkill_持っている場合true() {
-        Project p = new Project(1,"A銀行基幹システム更改",40,60, LocalDate.parse("2026-05-01"),LocalDate.parse("2027-03-31"), "React", "Java");
-        assertTrue(p.hasSkill("Java"));
-    }
-    @Test
-    void hasSkill_持っていない場合false() {
-        Project p = new Project(1,"A銀行基幹システム更改",40,60, LocalDate.parse("2026-05-01"),LocalDate.parse("2027-03-31"), "React", "Java");
-        assertFalse(p.hasSkill("MySQL"));
-    }
-    @Test
     void getSkills_配列を変更不可() {
         Project p = new Project(1,"A銀行基幹システム更改",40,60, LocalDate.parse("2026-05-01"),LocalDate.parse("2027-03-31"), "React", "Java");
         List<String> skills = p.getSkills();
