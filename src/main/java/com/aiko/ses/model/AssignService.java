@@ -3,13 +3,13 @@ import java.time.LocalDate;
 import java.util.List;
 
 public class AssignService {
-    private ParticipationStore pps;
-    public AssignService(ParticipationStore pps) {
-        this.pps = pps;
+    private final ParticipationStore participationStore;
+    public AssignService(ParticipationStore participationStore) {
+        this.participationStore = participationStore;
     }
 
     public List<Participation> getEngineerParticipation(Engineer e) {
-        return this.pps.getParticipations().stream()
+        return this.participationStore.getParticipations().stream()
                 .filter(p -> p.getEngineer() == e)
                 .toList();
     }
@@ -45,10 +45,10 @@ public class AssignService {
                 && p.isRecruiting();
     }
     public boolean executeAssign(Engineer e, Project p) {
-        if (!canAssign(e,p)) {
+        if (!canAssign(e, p)) {
             return false;
         }
-        pps.createParticipation(e, p, p.getStartDate(), p.getEndDate(), e.getPrice());
+        participationStore.createParticipation(e, p, p.getStartDate(), p.getEndDate(), e.getPrice());
         p.setRecruitingStatus(Project.RecruitingStatus.CLOSED);
         return true;
     }

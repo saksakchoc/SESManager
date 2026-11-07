@@ -17,11 +17,11 @@ public class AssignServiceTest {
         Project project1 = pjs.createProject("A社基幹システム改修", 40, 60, LocalDate.parse("2026-04-01"), LocalDate.parse("2027-03-31"));
         Project project2 = pjs.createProject("B社基幹システム改修", 40, 60, LocalDate.parse("2026-04-01"), LocalDate.parse("2027-03-31"));
 
-        ParticipationStore pps = new ParticipationStore();
-        pps.createParticipation(e, project1, LocalDate.parse("2026-04-01"), LocalDate.parse("2027-03-31"), 45);
-        pps.createParticipation(e, project2, LocalDate.parse("2027-04-01"), LocalDate.parse("2028-03-31"), 50);
+        ParticipationStore participationStore = new ParticipationStore();
+        participationStore.createParticipation(e, project1, LocalDate.parse("2026-04-01"), LocalDate.parse("2027-03-31"), 45);
+        participationStore.createParticipation(e, project2, LocalDate.parse("2027-04-01"), LocalDate.parse("2028-03-31"), 50);
 
-        AssignService as = new AssignService(pps);
+        AssignService as = new AssignService(participationStore);
 
         assertEquals(2, as.getEngineerParticipation(e).size());
         assertEquals(project1, as.getEngineerParticipation(e).get(0).getProject());
@@ -38,12 +38,12 @@ public class AssignServiceTest {
         Project project2 = pjs.createProject("B社基幹システム改修", 40, 60, LocalDate.parse("2027-04-01"), LocalDate.parse("2028-03-31"));
         Project project3 = pjs.createProject("C社基幹システム改修", 40, 60, LocalDate.parse("2026-04-01"), LocalDate.parse("2027-03-31"));
 
-        ParticipationStore pps = new ParticipationStore();
-        pps.createParticipation(e1, project1, LocalDate.parse("2026-04-01"), LocalDate.parse("2027-03-31"), 45);
-        pps.createParticipation(e1, project2, LocalDate.parse("2027-04-01"), LocalDate.parse("2028-03-31"), 50);
-        pps.createParticipation(e2, project3, LocalDate.parse("2026-04-01"), LocalDate.parse("2027-03-31"), 50);
+        ParticipationStore participationStore = new ParticipationStore();
+        participationStore.createParticipation(e1, project1, LocalDate.parse("2026-04-01"), LocalDate.parse("2027-03-31"), 45);
+        participationStore.createParticipation(e1, project2, LocalDate.parse("2027-04-01"), LocalDate.parse("2028-03-31"), 50);
+        participationStore.createParticipation(e2, project3, LocalDate.parse("2026-04-01"), LocalDate.parse("2027-03-31"), 50);
 
-        AssignService as = new AssignService(pps);
+        AssignService as = new AssignService(participationStore);
 
         assertEquals(2, as.getEngineerParticipation(e1).size());
         assertEquals(project1, as.getEngineerParticipation(e1).get(0).getProject());
@@ -54,8 +54,8 @@ public class AssignServiceTest {
         EngineerStore es = new EngineerStore();
         Engineer e1 = es.createEngineer("あいこ1", 45, "Java");
 
-        ParticipationStore pps = new ParticipationStore();
-        AssignService as = new AssignService(pps);
+        ParticipationStore participationStore = new ParticipationStore();
+        AssignService as = new AssignService(participationStore);
 
         assertEquals(0, as.getEngineerParticipation(e1).size());
     }
@@ -66,10 +66,10 @@ public class AssignServiceTest {
         ProjectStore pjs = new ProjectStore();
         Project project1 = pjs.createProject("A社基幹システム改修", 40, 60, LocalDate.parse("2026-04-01"), LocalDate.parse("2027-03-31"));
 
-        ParticipationStore pps = new ParticipationStore();
-        pps.createParticipation(e, project1, LocalDate.parse("2026-04-01"), LocalDate.parse("2027-03-31"), 45);
+        ParticipationStore participationStore = new ParticipationStore();
+        participationStore.createParticipation(e, project1, LocalDate.parse("2026-04-01"), LocalDate.parse("2027-03-31"), 45);
 
-        AssignService as = new AssignService(pps);
+        AssignService as = new AssignService(participationStore);
         assertTrue(as.isAvailableByPeriod(e, LocalDate.parse("2025-04-01"),LocalDate.parse("2025-04-01")));
         assertFalse(as.isAvailableByPeriod(e, LocalDate.parse("2026-04-01"),LocalDate.parse("2026-04-01")));
     }
@@ -81,10 +81,10 @@ public class AssignServiceTest {
         ProjectStore pjs = new ProjectStore();
         Project project1 = pjs.createProject("A社基幹システム改修", 40, 60, LocalDate.parse("2026-04-01"), LocalDate.parse("2027-03-31"));
 
-        ParticipationStore pps = new ParticipationStore();
-        pps.createParticipation(e, project1, LocalDate.parse("2026-04-01"), LocalDate.parse("2027-03-31"), 45);
+        ParticipationStore participationStore = new ParticipationStore();
+        participationStore.createParticipation(e, project1, LocalDate.parse("2026-04-01"), LocalDate.parse("2027-03-31"), 45);
 
-        AssignService as = new AssignService(pps);
+        AssignService as = new AssignService(participationStore);
         assertTrue(as.isAvailableByPeriod(e, LocalDate.parse("2025-04-01"),LocalDate.parse("2026-03-31")));
     }
 
@@ -95,10 +95,10 @@ public class AssignServiceTest {
         ProjectStore pjs = new ProjectStore();
         Project project1 = pjs.createProject("A社基幹システム改修", 40, 60, LocalDate.parse("2026-04-01"), LocalDate.parse("2027-03-31"));
 
-        ParticipationStore pps = new ParticipationStore();
-        pps.createParticipation(e, project1, LocalDate.parse("2026-04-01"), LocalDate.parse("2027-03-31"), 45);
+        ParticipationStore participationStore = new ParticipationStore();
+        participationStore.createParticipation(e, project1, LocalDate.parse("2026-04-01"), LocalDate.parse("2027-03-31"), 45);
 
-        AssignService as = new AssignService(pps);
+        AssignService as = new AssignService(participationStore);
         assertFalse(as.isAvailableByPeriod(e, LocalDate.parse("2026-04-01"), LocalDate.parse("2026-04-30")));
     }
     @Test
@@ -108,10 +108,10 @@ public class AssignServiceTest {
         ProjectStore pjs = new ProjectStore();
         Project project1 = pjs.createProject("A社基幹システム改修", 40, 60, LocalDate.parse("2026-04-01"), LocalDate.parse("2027-03-31"));
 
-        ParticipationStore pps = new ParticipationStore();
-        pps.createParticipation(e, project1, LocalDate.parse("2026-04-01"), LocalDate.parse("2027-03-31"), 45);
+        ParticipationStore participationStore = new ParticipationStore();
+        participationStore.createParticipation(e, project1, LocalDate.parse("2026-04-01"), LocalDate.parse("2027-03-31"), 45);
 
-        AssignService as = new AssignService(pps);
+        AssignService as = new AssignService(participationStore);
         assertFalse(as.isAvailableByPeriod(e, LocalDate.parse("2026-04-01"), LocalDate.parse("2027-04-30")));
     }
 
@@ -122,10 +122,10 @@ public class AssignServiceTest {
         ProjectStore pjs = new ProjectStore();
         Project project1 = pjs.createProject("A社基幹システム改修", 40, 60, LocalDate.parse("2026-04-01"), LocalDate.parse("2027-03-31"));
 
-        ParticipationStore pps = new ParticipationStore();
-        pps.createParticipation(e, project1, LocalDate.parse("2026-04-01"), LocalDate.parse("2027-03-31"), 45);
+        ParticipationStore participationStore = new ParticipationStore();
+        participationStore.createParticipation(e, project1, LocalDate.parse("2026-04-01"), LocalDate.parse("2027-03-31"), 45);
 
-        AssignService as = new AssignService(pps);
+        AssignService as = new AssignService(participationStore);
         assertFalse(as.isAvailableByPeriod(e, LocalDate.parse("2027-03-31"), LocalDate.parse("2027-04-30")));
     }
     @Test
@@ -135,10 +135,10 @@ public class AssignServiceTest {
         ProjectStore pjs = new ProjectStore();
         Project project1 = pjs.createProject("A社基幹システム改修", 40, 60, LocalDate.parse("2026-04-01"), LocalDate.parse("2027-03-31"));
 
-        ParticipationStore pps = new ParticipationStore();
-        pps.createParticipation(e, project1, LocalDate.parse("2026-04-01"), LocalDate.parse("2027-03-31"), 45);
+        ParticipationStore participationStore = new ParticipationStore();
+        participationStore.createParticipation(e, project1, LocalDate.parse("2026-04-01"), LocalDate.parse("2027-03-31"), 45);
 
-        AssignService as = new AssignService(pps);
+        AssignService as = new AssignService(participationStore);
         assertTrue(as.isAvailableByPeriod(e, LocalDate.parse("2027-04-01"), LocalDate.parse("2028-03-31")));
     }
     @Test
@@ -149,11 +149,11 @@ public class AssignServiceTest {
         Project project1 = pjs.createProject("A社基幹システム改修", 40, 60, LocalDate.parse("2026-04-01"), LocalDate.parse("2027-03-31"));
         Project project2 = pjs.createProject("B社基幹システム改修", 40, 60, LocalDate.parse("2027-04-01"), LocalDate.parse("2028-03-31"));
 
-        ParticipationStore pps = new ParticipationStore();
-        pps.createParticipation(e, project1, LocalDate.parse("2026-04-01"), LocalDate.parse("2027-03-31"), 45);
-        pps.createParticipation(e, project2, LocalDate.parse("2027-04-01"), LocalDate.parse("2028-03-31"), 50);
+        ParticipationStore participationStore = new ParticipationStore();
+        participationStore.createParticipation(e, project1, LocalDate.parse("2026-04-01"), LocalDate.parse("2027-03-31"), 45);
+        participationStore.createParticipation(e, project2, LocalDate.parse("2027-04-01"), LocalDate.parse("2028-03-31"), 50);
 
-        AssignService as = new AssignService(pps);
+        AssignService as = new AssignService(participationStore);
         assertFalse(as.isAvailableByPeriod(e, LocalDate.parse("2027-04-01"),LocalDate.parse("2027-04-02")));
 
     }
@@ -165,11 +165,11 @@ public class AssignServiceTest {
         Project project1 = pjs.createProject("A社基幹システム改修", 40, 60, LocalDate.parse("2026-04-01"), LocalDate.parse("2027-03-31"));
         Project project2 = pjs.createProject("B社基幹システム改修", 40, 60, LocalDate.parse("2027-04-01"), LocalDate.parse("2028-03-31"));
 
-        ParticipationStore pps = new ParticipationStore();
-        pps.createParticipation(e, project1, LocalDate.parse("2026-04-01"), LocalDate.parse("2027-03-31"), 45);
-        pps.createParticipation(e, project2, LocalDate.parse("2028-04-01"), LocalDate.parse("2029-03-31"), 50);
+        ParticipationStore participationStore = new ParticipationStore();
+        participationStore.createParticipation(e, project1, LocalDate.parse("2026-04-01"), LocalDate.parse("2027-03-31"), 45);
+        participationStore.createParticipation(e, project2, LocalDate.parse("2028-04-01"), LocalDate.parse("2029-03-31"), 50);
 
-        AssignService as = new AssignService(pps);
+        AssignService as = new AssignService(participationStore);
         assertTrue(as.isAvailableByPeriod(e, LocalDate.parse("2027-04-01"), LocalDate.parse("2028-03-31")));
     }
     @Test
@@ -179,10 +179,10 @@ public class AssignServiceTest {
         ProjectStore pjs = new ProjectStore();
         Project project1 = pjs.createProject("A社基幹システム改修", 40, 60, LocalDate.parse("2026-04-01"), LocalDate.parse("2027-03-31"));
 
-        ParticipationStore pps = new ParticipationStore();
-        pps.createParticipation(e, project1, LocalDate.parse("2026-04-01"), LocalDate.parse("2027-03-31"), 45);
+        ParticipationStore participationStore = new ParticipationStore();
+        participationStore.createParticipation(e, project1, LocalDate.parse("2026-04-01"), LocalDate.parse("2027-03-31"), 45);
 
-        AssignService as = new AssignService(pps);
+        AssignService as = new AssignService(participationStore);
         assertFalse(as.isAvailableByPeriod(e, LocalDate.parse("2025-04-01"), LocalDate.parse("2028-03-31")));
     }
     @Test
@@ -191,9 +191,9 @@ public class AssignServiceTest {
         Engineer e = es.createEngineer("あいこ1", 45, "Java");
         ProjectStore pjs = new ProjectStore();
 
-        ParticipationStore pps = new ParticipationStore();
+        ParticipationStore participationStore = new ParticipationStore();
 
-        AssignService as = new AssignService(pps);
+        AssignService as = new AssignService(participationStore);
         assertThrows(IllegalArgumentException.class, () -> {
             as.isAvailableByPeriod(e, LocalDate.parse("2026-04-01"),LocalDate.parse("2025-04-01"));
         });
@@ -203,9 +203,9 @@ public class AssignServiceTest {
         EngineerStore es = new EngineerStore();
         Engineer e = es.createEngineer("あいこ1", 45, "Java");
 
-        ParticipationStore pps = new ParticipationStore();
+        ParticipationStore participationStore = new ParticipationStore();
 
-        AssignService as = new AssignService(pps);
+        AssignService as = new AssignService(participationStore);
         assertTrue(as.isAvailableByPrice(e, 45,50));
     }
     @Test
@@ -213,9 +213,9 @@ public class AssignServiceTest {
         EngineerStore es = new EngineerStore();
         Engineer e = es.createEngineer("あいこ1", 45, "Java");
 
-        ParticipationStore pps = new ParticipationStore();
+        ParticipationStore participationStore = new ParticipationStore();
 
-        AssignService as = new AssignService(pps);
+        AssignService as = new AssignService(participationStore);
         assertTrue(as.isAvailableByPrice(e, 40,45));
     }
     @Test
@@ -223,9 +223,9 @@ public class AssignServiceTest {
         EngineerStore es = new EngineerStore();
         Engineer e = es.createEngineer("あいこ1", 45, "Java");
 
-        ParticipationStore pps = new ParticipationStore();
+        ParticipationStore participationStore = new ParticipationStore();
 
-        AssignService as = new AssignService(pps);
+        AssignService as = new AssignService(participationStore);
         assertFalse(as.isAvailableByPrice(e, 46,50));
     }
 
@@ -233,9 +233,9 @@ public class AssignServiceTest {
     void isAvailableByPrice_単価上下限より大きい() {
         EngineerStore es = new EngineerStore();
         Engineer e = es.createEngineer("あいこ1", 45, "Java");
-        ParticipationStore pps = new ParticipationStore();
+        ParticipationStore participationStore = new ParticipationStore();
 
-        AssignService as = new AssignService(pps);
+        AssignService as = new AssignService(participationStore);
         assertFalse(as.isAvailableByPrice(e, 41,44));
     }
     @Test
@@ -243,9 +243,9 @@ public class AssignServiceTest {
         EngineerStore es = new EngineerStore();
         Engineer e = es.createEngineer("あいこ1", 45);
 
-        ParticipationStore pps = new ParticipationStore();
+        ParticipationStore participationStore = new ParticipationStore();
 
-        AssignService as = new AssignService(pps);
+        AssignService as = new AssignService(participationStore);
 
         List<String> skills = List.of();
 
@@ -256,9 +256,9 @@ public class AssignServiceTest {
         EngineerStore es = new EngineerStore();
         Engineer e = es.createEngineer("あいこ1", 45, "Java");
 
-        ParticipationStore pps = new ParticipationStore();
+        ParticipationStore participationStore = new ParticipationStore();
 
-        AssignService as = new AssignService(pps);
+        AssignService as = new AssignService(participationStore);
 
         List<String> skills = List.of("Java");
 
@@ -269,9 +269,9 @@ public class AssignServiceTest {
         EngineerStore es = new EngineerStore();
         Engineer e = es.createEngineer("あいこ1", 45, "Java","SQL","JavaScript");
 
-        ParticipationStore pps = new ParticipationStore();
+        ParticipationStore participationStore = new ParticipationStore();
 
-        AssignService as = new AssignService(pps);
+        AssignService as = new AssignService(participationStore);
 
         List<String> skills = List.of("Java", "JavaScript");
 
@@ -282,9 +282,9 @@ public class AssignServiceTest {
         EngineerStore es = new EngineerStore();
         Engineer e = es.createEngineer("あいこ1", 45, "Java","SQL","JavaScript");
 
-        ParticipationStore pps = new ParticipationStore();
+        ParticipationStore participationStore = new ParticipationStore();
 
-        AssignService as = new AssignService(pps);
+        AssignService as = new AssignService(participationStore);
 
         List<String> skills = List.of("Java", "python");
 
@@ -297,9 +297,9 @@ public class AssignServiceTest {
         ProjectStore pjs = new ProjectStore();
         Project project1 = pjs.createProject("A社基幹システム改修", 40, 60, LocalDate.parse("2026-04-01"), LocalDate.parse("2027-03-31"));
 
-        ParticipationStore pps = new ParticipationStore();
+        ParticipationStore participationStore = new ParticipationStore();
 
-        AssignService as = new AssignService(pps);
+        AssignService as = new AssignService(participationStore);
         assertTrue(as.canAssign(e, project1));
     }
 
@@ -310,11 +310,11 @@ public class AssignServiceTest {
         ProjectStore pjs = new ProjectStore();
         Project project1 = pjs.createProject("A社基幹システム改修", 40, 60, LocalDate.parse("2026-04-01"), LocalDate.parse("2027-03-31"));
 
-        ParticipationStore pps = new ParticipationStore();
+        ParticipationStore participationStore = new ParticipationStore();
         /* 同じ期間の案件に参画中 */
-        pps.createParticipation(e, project1, LocalDate.parse("2026-04-01"), LocalDate.parse("2027-03-31"), 45);
+        participationStore.createParticipation(e, project1, LocalDate.parse("2026-04-01"), LocalDate.parse("2027-03-31"), 45);
 
-        AssignService as = new AssignService(pps);
+        AssignService as = new AssignService(participationStore);
         assertFalse(as.canAssign(e, project1));
     }
     @Test
@@ -324,9 +324,9 @@ public class AssignServiceTest {
         ProjectStore pjs = new ProjectStore();
         Project project1 = pjs.createProject("A社基幹システム改修", 50, 60, LocalDate.parse("2026-04-01"), LocalDate.parse("2027-03-31"));
 
-        ParticipationStore pps = new ParticipationStore();
+        ParticipationStore participationStore = new ParticipationStore();
 
-        AssignService as = new AssignService(pps);
+        AssignService as = new AssignService(participationStore);
         assertFalse(as.canAssign(e, project1));
     }
 
@@ -338,9 +338,9 @@ public class AssignServiceTest {
         /* pythonが必須 */
         Project project1 = pjs.createProject("A社基幹システム改修", 40, 60, LocalDate.parse("2026-04-01"), LocalDate.parse("2027-03-31"),"python");
 
-        ParticipationStore pps = new ParticipationStore();
+        ParticipationStore participationStore = new ParticipationStore();
 
-        AssignService as = new AssignService(pps);
+        AssignService as = new AssignService(participationStore);
         assertFalse(as.canAssign(e, project1));
     }
 
@@ -352,9 +352,9 @@ public class AssignServiceTest {
         /* pythonが必須 */
         Project project1 = pjs.createProject("A社基幹システム改修", 40, 60, LocalDate.parse("2026-04-01"), LocalDate.parse("2027-03-31"), false);
 
-        ParticipationStore pps = new ParticipationStore();
+        ParticipationStore participationStore = new ParticipationStore();
 
-        AssignService as = new AssignService(pps);
+        AssignService as = new AssignService(participationStore);
         assertFalse(as.canAssign(e, project1));
     }
     @Test
@@ -365,23 +365,30 @@ public class AssignServiceTest {
         /* 価格条件を満たさない */
         Project p = pjs.createProject("A社基幹システム改修", 50, 60, LocalDate.parse("2026-04-01"), LocalDate.parse("2027-03-31"));
 
-        ParticipationStore pps = new ParticipationStore();
-
-        AssignService as = new AssignService(pps);
+        ParticipationStore participationStore = new ParticipationStore();
+        final int countParticipation = participationStore.countParticipations();
+        AssignService as = new AssignService(participationStore);
         assertFalse(as.executeAssign(e,p));
+        assertEquals(countParticipation, participationStore.countParticipations()); // アサイン件数は変化無し
+        assertTrue(p.isRecruiting()); // アサインしていないのでRECRUITING
     }
     @Test
     void executeAssign_参画状態オブジェクト作成成功() {
         EngineerStore es = new EngineerStore();
-        Engineer e = es.createEngineer("あいこ1", 45, "Java");
+        Engineer e = es.createEngineer("あいこ", 45, "Java");
         ProjectStore pjs = new ProjectStore();
         Project p = pjs.createProject("A社基幹システム改修", 40, 60, LocalDate.parse("2026-04-01"), LocalDate.parse("2027-03-31"));
 
-        ParticipationStore pps = new ParticipationStore();
+        ParticipationStore participationStore = new ParticipationStore();
 
-        AssignService as = new AssignService(pps);
+        AssignService as = new AssignService(participationStore);
         assertTrue(p.isRecruiting()); // アサイン前はRECRUITING
         assertTrue(as.executeAssign(e,p)); // 成功したらtrue
         assertFalse(p.isRecruiting()); // アサイン後はCLOSED
+        Participation participation = participationStore.getParticipations().get(0);
+        assertEquals("あいこ", participation.getEngineer().getName());
+        assertEquals("A社基幹システム改修", participation.getProject().getName());
+        assertEquals(45, participation.getContractPrice());
+        assertEquals(LocalDate.parse("2026-04-01"), participation.getStartDate());
     }
 }
