@@ -16,7 +16,7 @@ public class Participation {
         if (startDate == null || endDate == null || endDate.isBefore(startDate)) {
             throw new IllegalArgumentException("参画期間が不正です");
         }
-        if (contractPrice < 1 || contractPrice > 1000) {
+        if (contractPrice < 1) {
             throw new IllegalArgumentException("契約単価が不正な値です");
         }
 
