@@ -77,18 +77,18 @@ public class ProjectTest {
         });
     }
     @Test
-    void isRecruiting_募集中区分を取得_デフォルト値はfalse() {
+    void isRecruiting_募集中区分を取得_デフォルト値はtrue() {
         Project p = new Project(1,"A銀行基幹システム更改",40,60, LocalDate.parse("2026-05-01"),LocalDate.parse("2027-03-31"), "React", "Java");
-        assertEquals(false, p.isRecruiting());
+        assertEquals(true, p.isRecruiting());
     }
     @Test
-    void isRecruiting_募集中区分を取得_trueをセット() {
+    void isRecruiting_募集中区分を取得_RECRUITINGをセット() {
         Project p = new Project(1,"A銀行基幹システム更改",40,60, LocalDate.parse("2026-05-01"),LocalDate.parse("2027-03-31"), "React", "Java");
         p.setRecruitingStatus(Project.RecruitingStatus.RECRUITING);
         assertEquals(true, p.isRecruiting());
     }
     @Test
-    void isRecruiting_募集中区分を取得_falseをセット() {
+    void isRecruiting_募集中区分を取得_CLOSEDをセット() {
         Project p = new Project(1,"A銀行基幹システム更改",40,60, LocalDate.parse("2026-05-01"),LocalDate.parse("2027-03-31"), "React", "Java");
         p.setRecruitingStatus(Project.RecruitingStatus.CLOSED);
         assertEquals(false, p.isRecruiting());
