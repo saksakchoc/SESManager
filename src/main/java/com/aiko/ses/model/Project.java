@@ -74,7 +74,4 @@ public class Project {
     public boolean isRecruiting() {
         return (status == RecruitingStatus.RECRUITING);
     }
-    public boolean isWithinPrice(int price) {
-        return price >= minPrice && price <= maxPrice;
-    }
 }

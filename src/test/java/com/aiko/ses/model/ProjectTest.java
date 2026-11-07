@@ -83,29 +83,4 @@ public class ProjectTest {
         p.setRecruitingStatus(Project.RecruitingStatus.CLOSED);
         assertEquals(false, p.isRecruiting());
     }
-    @Test
-    void isWithinPrice_範囲内ならtrue() {
-        Project p = new Project(1,"A銀行基幹システム更改",40,60, LocalDate.parse("2026-05-01"),LocalDate.parse("2027-03-31"), "React", "Java");
-        assertTrue(p.isWithinPrice(50));
-    }
-    @Test
-    void isWithinPrice_範囲内ならtrue_下限() {
-        Project p = new Project(1,"A銀行基幹システム更改",40,60, LocalDate.parse("2026-05-01"),LocalDate.parse("2027-03-31"), "React", "Java");
-        assertTrue(p.isWithinPrice(40));
-    }
-    @Test
-    void isWithinPrice_範囲内ならtrue_上限() {
-        Project p = new Project(1,"A銀行基幹システム更改",40,60, LocalDate.parse("2026-05-01"),LocalDate.parse("2027-03-31"), "React", "Java");
-        assertTrue(p.isWithinPrice(60));
-    }
-    @Test
-    void isWithinPrice_範囲外ならfalse_下限以下() {
-        Project p = new Project(1,"A銀行基幹システム更改",40,60, LocalDate.parse("2026-05-01"),LocalDate.parse("2027-03-31"), "React", "Java");
-        assertFalse(p.isWithinPrice(30));
-    }
-    @Test
-    void isWithinPrice_範囲外ならfalse_上限以上() {
-        Project p = new Project(1,"A銀行基幹システム更改",40,60, LocalDate.parse("2026-05-01"),LocalDate.parse("2027-03-31"), "React", "Java");
-        assertFalse(p.isWithinPrice(120));
-    }
 }
