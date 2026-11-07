@@ -4,23 +4,6 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 class EngineerTest {
-
-    @Test
-    void hasSkill_持っている場合true() {
-        Engineer e = new Engineer(1,"あいこ", 45, "Java");
-        assertTrue(e.hasSkill("Java"));
-    }
-
-    @Test
-    void hasSkill_持っていない場合false() {
-        Engineer e = new Engineer(1,"あいこ", 45, "Java");
-        assertFalse(e.hasSkill("Python"));
-    }
-    @Test
-    void hasSkill_持っている場合true_複数所持者() {
-        Engineer e = new Engineer(1,"あいこ", 45, "Java", "React");
-        assertTrue(e.hasSkill("Java"));
-    }
     @Test
     void getSkills_配列を変更不可() {
         Engineer e = new Engineer(1,"あいこ", 45, "React", "Java");

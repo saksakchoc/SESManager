@@ -43,14 +43,4 @@ public class Engineer {
     public List<String> getSkills() {
         return List.copyOf(skills);
     }
-    /* 入力されたスキルを保有するかどうかを判定
-     * 保有する場合trueを返す */
-    public boolean hasSkill(String skill) {
-        for (String s: this.skills) {
-            if (s.equals(skill)) {
-                return true;
-            }
-        }
-        return false;
-    }
 }
