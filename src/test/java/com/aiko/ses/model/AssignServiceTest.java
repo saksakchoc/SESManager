@@ -357,4 +357,31 @@ public class AssignServiceTest {
         AssignService as = new AssignService(pps);
         assertFalse(as.canAssign(e, project1));
     }
+    @Test
+    void executeAssign_canAssignでNG() {
+        EngineerStore es = new EngineerStore();
+        Engineer e = es.createEngineer("あいこ1", 45, "Java");
+        ProjectStore pjs = new ProjectStore();
+        /* 価格条件を満たさない */
+        Project p = pjs.createProject("A社基幹システム改修", 50, 60, LocalDate.parse("2026-04-01"), LocalDate.parse("2027-03-31"));
+
+        ParticipationStore pps = new ParticipationStore();
+
+        AssignService as = new AssignService(pps);
+        assertFalse(as.executeAssign(e,p));
+    }
+    @Test
+    void executeAssign_参画状態オブジェクト作成成功() {
+        EngineerStore es = new EngineerStore();
+        Engineer e = es.createEngineer("あいこ1", 45, "Java");
+        ProjectStore pjs = new ProjectStore();
+        Project p = pjs.createProject("A社基幹システム改修", 40, 60, LocalDate.parse("2026-04-01"), LocalDate.parse("2027-03-31"));
+
+        ParticipationStore pps = new ParticipationStore();
+
+        AssignService as = new AssignService(pps);
+        assertTrue(p.isRecruiting()); // アサイン前はRECRUITING
+        assertTrue(as.executeAssign(e,p)); // 成功したらtrue
+        assertFalse(p.isRecruiting()); // アサイン後はCLOSED
+    }
 }

@@ -44,4 +44,12 @@ public class AssignService {
                 && isAvailableBySkills(e, p.getSkills())
                 && p.isRecruiting();
     }
+    public boolean executeAssign(Engineer e, Project p) {
+        if (!canAssign(e,p)) {
+            return false;
+        }
+        pps.createParticipation(e, p, p.getStartDate(), p.getEndDate(), e.getPrice());
+        p.setRecruitingStatus(Project.RecruitingStatus.CLOSED);
+        return true;
+    }
 }
