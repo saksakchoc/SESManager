@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ParticipationStore {
-    private final ArrayList<Participation> participations = new ArrayList<>();
+    private final List<Participation> participations = new ArrayList<>();
 
     public List<Participation> getParticipations() {
         return List.copyOf(participations);
