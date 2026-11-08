@@ -20,10 +20,10 @@ public class Main {
             System.out.println("[4] 案件検索");
             System.out.println("[E] プログラム終了");
             System.out.println("");
-            System.out.println("メニュー番号を選択してください。");
+            System.out.println("メニュー番号を選択してください");
             String input = scanner.nextLine();
             if (Objects.equals(input, "E")) {
-                System.out.println("プログラムを終了します。");
+                System.out.println("プログラムを終了します");
                 return;
             }
             callMainProcess(input);
@@ -49,7 +49,33 @@ public class Main {
         }
     }
     private static void registerEngineer() {
-        System.out.println("エンジニア登録処理を関数で呼び出します");
+        System.out.println("エンジニア氏名, 単価, スキルを順番に聞いていきます");
+        System.out.println("まずはエンジニア氏名を教えてください");
+        // スキャナーは使い回す
+        Scanner scanner = new Scanner(System.in);
+        // エンジニア名振り分け処理
+        String engineerName;
+        while (true) {
+            String input = scanner.nextLine();
+            switch (input) {
+                case "":
+                    // エラーメッセージ(使い方を表示)
+                    System.out.println("");
+                    System.out.println("***************************");
+                    System.out.println("エンジニア氏名を入力してください");
+                    System.out.println("***************************");
+                    System.out.println("");
+                    break;
+                case "M":
+                    System.out.println("メインメニューに戻ります");
+                    break;
+                default:
+                    engineerName = input;
+                    break;
+            }
+            break; // 本当はエラーのときは無限ループにしたい
+        }
+        System.out.println(engineerName);
     }
     private static void searchEngineer() {
         System.out.println("エンジニア検索処理を関数で呼び出します");
