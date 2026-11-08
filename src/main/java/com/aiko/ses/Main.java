@@ -4,29 +4,30 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        while (true) {
-            System.out.println("========================");
-            System.out.println("");
-            System.out.println("=   エンジニア管理ツール   =");
-            System.out.println("");
-            System.out.println("========================");
-            System.out.println("");
-            System.out.println("- メインメニュー -");
-            System.out.println("");
-            System.out.println("[1] エンジニア登録");
-            System.out.println("[2] エンジニア検索");
-            System.out.println("[3] 案件登録");
-            System.out.println("[4] 案件検索");
-            System.out.println("[E] プログラム終了");
-            System.out.println("");
-            System.out.println("メニュー番号を選択してください");
-            String input = scanner.nextLine();
-            if (Objects.equals(input, "E")) {
-                System.out.println("プログラムを終了します");
-                return;
+        try (Scanner scanner = new Scanner(System.in)) {
+            while (true) {
+                System.out.println("========================");
+                System.out.println("");
+                System.out.println("=   エンジニア管理ツール   =");
+                System.out.println("");
+                System.out.println("========================");
+                System.out.println("");
+                System.out.println("- メインメニュー -");
+                System.out.println("");
+                System.out.println("[1] エンジニア登録");
+                System.out.println("[2] エンジニア検索");
+                System.out.println("[3] 案件登録");
+                System.out.println("[4] 案件検索");
+                System.out.println("[E] プログラム終了");
+                System.out.println("");
+                System.out.println("メニュー番号を選択してください");
+                String input = scanner.nextLine();
+                if (Objects.equals(input, "E")) {
+                    System.out.println("プログラムを終了します");
+                    return;
+                }
+                callMainProcess(input, scanner);
             }
-            callMainProcess(input);
         }
     }
     private static void callMainProcess(String input) {
