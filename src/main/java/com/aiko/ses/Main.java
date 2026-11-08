@@ -22,36 +22,26 @@ public class Main {
             System.out.println("");
             System.out.println("メニュー番号を選択してください。");
             input = scanner.nextLine();
-            if (input.equals("E")) {
-                System.out.println("プログラムを終了します。");
-                return;
+            switch (input) {
+                case "1": System.out.println("エンジニア登録処理を関数で呼び出します");
+                    return;
+                case "2": System.out.println("エンジニア検索処理を関数で呼び出します");
+                    return;
+                case "3": System.out.println("案件登録処理を関数で呼び出します");
+                    return;
+                case "4": System.out.println("案件検索処理を関数で呼び出します");
+                    return;
+                case "E":
+                    System.out.println("プログラムを終了します。");
+                    return;
+                default: break;
             }
-            int menuId;
-            try {
-                menuId = Integer.parseInt(input);
-                if (menuId > 0 && menuId <= 4) {
-                    break;
-                    // 1~4でなければ共通エラー表示にすすむ
-                }
-            } catch(NumberFormatException e) {
-                // 数値に変換できなければ、共通エラー表示にすすむ
-            }
+
             System.out.println("");
             System.out.println("***************************");
             System.out.println("1~4の整数か、Eを入力してください");
             System.out.println("***************************");
             System.out.println("");
-
-        }
-        switch (input) {
-            case "1": System.out.println("エンジニア登録処理へ進みます");
-            break;
-            case "2": System.out.println("エンジニア検索処理へ進みます");
-            break;
-            case "3": System.out.println("案件登録処理へ進みます");
-            break;
-            case "4": System.out.println("案件検索処理へ進みます");
-            break;
         }
     }
 }
