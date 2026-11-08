@@ -103,7 +103,7 @@ public class Main {
                 // 0ならループに戻る
             } catch (NumberFormatException e) {
                 // 整数に変換できない場合はループに戻る
-                System.out.println("整数以外が入力されました");
+                System.out.println("入力できる範囲の整数を入力してください");
             }
         }
         System.out.println("単価が入力されました: " + price + "です");
