@@ -73,6 +73,7 @@ public class Main {
                     System.out.println("");
                     continue; // 無限ループ
                 case "M":
+                case "B":
                     System.out.println("メインメニューに戻ります");
                     return;
                 default:
@@ -82,13 +83,13 @@ public class Main {
             // エンジニア名が入力されたときだけループを抜ける
             break;
         }
-        System.out.println("エンジニア名が入力されました: " + engineerName + "です");
+        System.out.println("エンジニア名が入力されました: " + engineerName);
         // 単価振り分け処理
         int price;
         while (true) {
             System.out.println("単価を教えてください(1以上の整数)");
             String priceInput = scanner.nextLine();
-            if (Objects.equals(priceInput, "M")) {
+            if (Objects.equals(priceInput, "M") || Objects.equals(priceInput, "B")) {
                     System.out.println("メインメニューに戻ります");
                     return;
             }
@@ -113,7 +114,7 @@ public class Main {
         System.out.println("スキルを登録しない場合は入力無しでOK");
         String skillsInput = scanner.nextLine();
         String skillsListByComma = "";
-        if (Objects.equals(skillsInput, "M")) {
+        if (Objects.equals(skillsInput, "M") || Objects.equals(skillsInput, "B")) {
             System.out.println("メインメニューに戻ります");
             return;
         }
