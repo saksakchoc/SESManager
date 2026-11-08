@@ -24,24 +24,24 @@ public class Main {
             input = scanner.nextLine();
             switch (input) {
                 case "1": System.out.println("エンジニア登録処理を関数で呼び出します");
-                    return;
+                    break;
                 case "2": System.out.println("エンジニア検索処理を関数で呼び出します");
-                    return;
+                    break;
                 case "3": System.out.println("案件登録処理を関数で呼び出します");
-                    return;
+                    break;
                 case "4": System.out.println("案件検索処理を関数で呼び出します");
-                    return;
+                    break;
                 case "E":
                     System.out.println("プログラムを終了します。");
                     return;
-                default: break;
+                default:
+                    System.out.println("");
+                    System.out.println("***************************");
+                    System.out.println("1~4の整数か、Eを入力してください");
+                    System.out.println("***************************");
+                    System.out.println("");
+                    break;
             }
-
-            System.out.println("");
-            System.out.println("***************************");
-            System.out.println("1~4の整数か、Eを入力してください");
-            System.out.println("***************************");
-            System.out.println("");
         }
     }
 }
