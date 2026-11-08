@@ -3,11 +3,6 @@ import java.util.ArrayList;
 
 public class EngineerStore {
     private final ArrayList<Engineer> engineers = new ArrayList<>();
-
-    public EngineerStore() {
-
-    }
-
     public Engineer getEngineer(int id) {
         for (Engineer engineer: engineers) {
             if(engineer.getId() == id) {

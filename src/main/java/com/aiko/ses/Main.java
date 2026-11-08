@@ -1,9 +1,15 @@
 package com.aiko.ses;
 import com.aiko.ses.model.EngineerStore;
+import com.aiko.ses.model.ParticipationStore;
+import com.aiko.ses.model.ProjectStore;
 
 import java.util.*;
 
 public class Main {
+    private static final EngineerStore engineerStore = new EngineerStore();
+    private static final ProjectStore projectStore = new ProjectStore();
+    private static final ParticipationStore participationStore = new ParticipationStore();
+
     public static void main(String[] args) {
         try (Scanner scanner = new Scanner(System.in)) {
             while (true) {
@@ -101,36 +107,71 @@ public class Main {
         System.out.println("単価が入力されました: " + price + "です");
         // スキル振り分け処理
         List<String> skills = new ArrayList<>();
-        while (true) {
-            System.out.println("スキルを教えてください(カンマ区切り)");
-            System.out.println("スキルを登録しない場合は入力無しでOK");
-            String input = scanner.nextLine();
-            if (Objects.equals(input, "M")) {
-                System.out.println("メインメニューに戻ります");
-                return;
-            }
-            if (!Objects.equals(input, "")) {
-                // スキルが入力されたたら配列にいれる
-                Collections.addAll(skills, input.split("\\s+"));
-                if (skills.size() > 1) {
-                    System.out.println("スキルを登録します: ");
-                    for (int i = 0; i < skills.size(); i++) {
-                        System.out.print(skills.get(i));
-                        if (i < skills.size() - 1) {
-                            System.out.print(",");
-                        } else {
-                            System.out.println("");
-                        }
+        System.out.println("スキルを教えてください(カンマ区切り)");
+        System.out.println("スキルを登録しない場合は入力無しでOK");
+        String input = scanner.nextLine(); // ここだけinputのスコープが広いのがなんか気持ち悪い
+        if (Objects.equals(input, "M")) {
+            System.out.println("メインメニューに戻ります");
+            return;
+        }
+        if (!Objects.equals(input, "")) {
+            // スキルが入力されたたら配列にいれる
+            Collections.addAll(skills, input.split(","));
+            if (!skills.isEmpty()) {
+                System.out.println("スキルを登録します: ");
+                for (int i = 0; i < skills.size(); i++) {
+                    System.out.print(skills.get(i));
+                    if (i < skills.size() - 1) {
+                        System.out.print(",");
+                    } else {
+                        System.out.println("");
                     }
                 }
-                break;
             }
-            // 空文字が入力された、もしくはカンマのみが入力されたらスキルを登録せず終了
-            System.out.println("スキルを登録しません");
         }
-        EngineerStore engineerStore = new EngineerStore();
-        // いまさらだが、skillsはListで渡したほうがよかったか？
-        engineerStore.createEngineer(engineerName, price, String.valueOf(skills));
+        // 空文字が入力された、もしくはカンマのみが入力されたらスキルを登録せず終了
+        System.out.println("スキルを登録しません");
+
+        System.out.println("エンジニア登録内容を受け取りました。");
+        System.out.println("エンジニア名: " + engineerName);
+        System.out.println("目安単価: " + price);
+
+        StringBuilder outputSkillString = new StringBuilder();
+        if (skills.isEmpty()) {
+            outputSkillString = new StringBuilder("なし");
+        } else {
+            for (String skill : skills) {
+                outputSkillString.append(skill);
+            }
+        }
+
+        System.out.println("スキル: " + outputSkillString);
+        System.out.println("こちらの内容で登録してよろしいですか？ Y/N");
+        // 確認画面
+        while (true) {
+            String input = scanner.nextLine(); // skillの登録時にinputっていう変数定義しちゃってるからここで使えないのなんか気持ち悪い
+            switch (input) {
+                case "Y":
+                    break;
+                case "N":
+                    System.out.println("登録をキャンセルしました");
+                    // ここで登録メニューに戻したい
+                    break;
+                default:
+                    // エラーメッセージ(使い方を表示)
+                    System.out.println("");
+                    System.out.println("***************************");
+                    System.out.println("YまたはNを入力してください(Y: 登録する / N: 登録しない");
+                    System.out.println("***************************");
+                    System.out.println("");
+                    continue;
+            }
+            break;
+        }
+
+        // skillsはStringに変換して渡す
+        engineerStore.createEngineer(engineerName, price, skills.toString());
+        System.out.println("エンジニアを登録しました。エンジニア詳細画面に移動します");
     }
     private static void searchEngineer(Scanner scanner) {
         System.out.println("エンジニア検索処理を関数で呼び出します");
