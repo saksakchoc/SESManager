@@ -23,16 +23,18 @@ public class Main {
             System.out.println("メニュー番号を選択してください。");
             input = scanner.nextLine();
             if (input.equals("E")) {
-                break;
+                System.out.println("プログラムを終了します。");
+                return;
             }
             int menuId;
             try {
                 menuId = Integer.parseInt(input);
                 if (menuId > 0 && menuId <= 4) {
                     break;
+                    // 1~4でなければ共通エラー表示にすすむ
                 }
             } catch(NumberFormatException e) {
-
+                // 数値に変換できなければ、共通エラー表示にすすむ
             }
             System.out.println("");
             System.out.println("***************************");
@@ -41,7 +43,15 @@ public class Main {
             System.out.println("");
 
         }
-        System.out.println("メニュー" + input + "が選択されました" );
-
+        switch (input) {
+            case "1": System.out.println("エンジニア登録処理へ進みます");
+            break;
+            case "2": System.out.println("エンジニア検索処理へ進みます");
+            break;
+            case "3": System.out.println("案件登録処理へ進みます");
+            break;
+            case "4": System.out.println("案件検索処理へ進みます");
+            break;
+        }
     }
 }
