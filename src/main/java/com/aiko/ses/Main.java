@@ -30,15 +30,15 @@ public class Main {
             }
         }
     }
-    private static void callMainProcess(String input) {
+    private static void callMainProcess(String input, Scanner scanner) {
         switch (input) {
-            case "1": registerEngineer();
+            case "1": registerEngineer(scanner);
                 break;
-            case "2": searchEngineer();
+            case "2": searchEngineer(scanner);
                 break;
-            case "3": registerProject();
+            case "3": registerProject(scanner);
                 break;
-            case "4": searchProject();
+            case "4": searchProject(scanner);
                 break;
             default:
                 System.out.println("");
@@ -49,11 +49,9 @@ public class Main {
                 break;
         }
     }
-    private static void registerEngineer() {
+    private static void registerEngineer(Scanner scanner) {
         System.out.println("エンジニア氏名, 単価, スキルを順番に聞いていきます");
         System.out.println("まずはエンジニア氏名を教えてください");
-        // スキャナーは使い回す
-        Scanner scanner = new Scanner(System.in);
         // エンジニア名振り分け処理
         String engineerName;
         while (true) {
@@ -66,10 +64,10 @@ public class Main {
                     System.out.println("エンジニア氏名を入力してください");
                     System.out.println("***************************");
                     System.out.println("");
-                    break;
+                    continue;
                 case "M":
                     System.out.println("メインメニューに戻ります");
-                    break;
+                    return;
                 default:
                     engineerName = input;
                     break;
@@ -78,13 +76,13 @@ public class Main {
         }
         System.out.println(engineerName);
     }
-    private static void searchEngineer() {
+    private static void searchEngineer(Scanner scanner) {
         System.out.println("エンジニア検索処理を関数で呼び出します");
     }
-    private static void registerProject() {
+    private static void registerProject(Scanner scanner) {
         System.out.println("案件登録処理を関数で呼び出します");
     }
-    private static void searchProject() {
+    private static void searchProject(Scanner scanner) {
         System.out.println("案件検索処理を関数で呼び出します");
     }
 }
