@@ -99,9 +99,11 @@ public class Main {
                     price = inputNum;
                     break;
                 }
+                System.out.println("1以上の数値を入力してください");
                 // 0ならループに戻る
             } catch (NumberFormatException e) {
                 // 整数に変換できない場合はループに戻る
+                System.out.println("整数以外が入力されました");
             }
         }
         System.out.println("単価が入力されました: " + price + "です");
@@ -132,9 +134,8 @@ public class Main {
         System.out.println("エンジニア登録内容を受け取りました。");
         System.out.println("エンジニア名: " + engineerName);
         System.out.println("目安単価: " + price);
-
-//        System.out.println("スキル: " + + skillsListByCommaが""なら"なし"と表示したい);
-//        いっかい、outputSkillsStrみたいな変数噛ませればいいのはわかるんだけど、JavaScriptでいう二項文みたいなのあればいいんだけど・・・
+        System.out.println("スキル: "
+                + (skills.isEmpty() ? "なし" : skillsListByComma));
         System.out.println("こちらの内容で登録してよろしいですか？");
         if (askForConfirmation(scanner)) {
             // 登録メイン処理
