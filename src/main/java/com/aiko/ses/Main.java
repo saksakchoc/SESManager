@@ -1,10 +1,10 @@
 package com.aiko.ses;
+import java.util.Objects;
 import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        String input;
         while (true) {
             System.out.println("========================");
             System.out.println("");
@@ -21,27 +21,31 @@ public class Main {
             System.out.println("[E] プログラム終了");
             System.out.println("");
             System.out.println("メニュー番号を選択してください。");
-            input = scanner.nextLine();
-            switch (input) {
-                case "1": System.out.println("エンジニア登録処理を関数で呼び出します");
-                    break;
-                case "2": System.out.println("エンジニア検索処理を関数で呼び出します");
-                    break;
-                case "3": System.out.println("案件登録処理を関数で呼び出します");
-                    break;
-                case "4": System.out.println("案件検索処理を関数で呼び出します");
-                    break;
-                case "E":
-                    System.out.println("プログラムを終了します。");
-                    return;
-                default:
-                    System.out.println("");
-                    System.out.println("***************************");
-                    System.out.println("1~4の整数か、Eを入力してください");
-                    System.out.println("***************************");
-                    System.out.println("");
-                    break;
+            String input = scanner.nextLine();
+            if (Objects.equals(input, "E")) {
+                System.out.println("プログラムを終了します。");
+                return;
             }
+            callMainProcess(input);
+        }
+    }
+    private static void callMainProcess(String input) {
+        switch (input) {
+            case "1": System.out.println("エンジニア登録処理を関数で呼び出します");
+                break;
+            case "2": System.out.println("エンジニア検索処理を関数で呼び出します");
+                break;
+            case "3": System.out.println("案件登録処理を関数で呼び出します");
+                break;
+            case "4": System.out.println("案件検索処理を関数で呼び出します");
+                break;
+            default:
+                System.out.println("");
+                System.out.println("***************************");
+                System.out.println("1~4の整数か、Eを入力してください");
+                System.out.println("***************************");
+                System.out.println("");
+                break;
         }
     }
 }
