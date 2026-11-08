@@ -110,6 +110,7 @@ public class Main {
         System.out.println("スキルを教えてください(カンマ区切り)");
         System.out.println("スキルを登録しない場合は入力無しでOK");
         String skillsInput = scanner.nextLine();
+        String skillsListByComma = "";
         if (Objects.equals(skillsInput, "M")) {
             System.out.println("メインメニューに戻ります");
             return;
@@ -119,41 +120,27 @@ public class Main {
             Collections.addAll(skills, skillsInput.split(","));
             if (!skills.isEmpty()) {
                 System.out.println("スキルを登録します: ");
-                for (int i = 0; i < skills.size(); i++) {
-                    System.out.print(skills.get(i));
-                    if (i < skills.size() - 1) {
-                        System.out.print(",");
-                    } else {
-                        System.out.println("");
-                    }
-                }
+                skillsListByComma = String.join(", ", skills);
+            } else {
+                // カンマのみが入力されたらスキルを登録せず終了
+                System.out.println("スキルを登録しません");
             }
+        } else {
+            // 空文字が入力されたらスキルを登録せず終了
+            System.out.println("スキルを登録しません");
         }
-        // 空文字が入力された、もしくはカンマのみが入力されたらスキルを登録せず終了
-        System.out.println("スキルを登録しません");
-
         System.out.println("エンジニア登録内容を受け取りました。");
         System.out.println("エンジニア名: " + engineerName);
         System.out.println("目安単価: " + price);
 
-        StringBuilder outputSkillString = new StringBuilder();
-        if (skills.isEmpty()) {
-            outputSkillString = new StringBuilder("なし");
-        } else {
-            for (String skill : skills) {
-                outputSkillString.append(skill);
-            }
-        }
-
-        System.out.println("スキル: " + outputSkillString);
+//        System.out.println("スキル: " + + skillsListByCommaが""なら"なし"と表示したい);
+//        いっかい、outputSkillsStrみたいな変数噛ませればいいのはわかるんだけど、JavaScriptでいう二項文みたいなのあればいいんだけど・・・
         System.out.println("こちらの内容で登録してよろしいですか？");
         if (askForConfirmation(scanner)) {
             // 登録メイン処理
             // skillsはStringに変換して渡す
-            engineerStore.createEngineer(engineerName, price, skills.toString());
+            engineerStore.createEngineer(engineerName, price, skills.toArray(new String[0]));
             System.out.println("エンジニアを登録しました。エンジニア詳細画面に移動します");
-        } else {
-            // ここでもう一度エンジニア登録処理を呼び出したい。全体をループで囲うべき？
         }
     }
     private static void searchEngineer(Scanner scanner) {
