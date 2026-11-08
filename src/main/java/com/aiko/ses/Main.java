@@ -1,6 +1,7 @@
 package com.aiko.ses;
-import java.util.Objects;
-import java.util.Scanner;
+import com.aiko.ses.model.EngineerStore;
+
+import java.util.*;
 
 public class Main {
     public static void main(String[] args) {
@@ -64,7 +65,7 @@ public class Main {
                     System.out.println("エンジニア氏名を入力してください");
                     System.out.println("***************************");
                     System.out.println("");
-                    continue;
+                    continue; // 無限ループ
                 case "M":
                     System.out.println("メインメニューに戻ります");
                     return;
@@ -72,9 +73,64 @@ public class Main {
                     engineerName = input;
                     break;
             }
-            break; // 本当はエラーのときは無限ループにしたい
+            // エンジニア名が入力されたときだけループを抜ける
+            break;
         }
-        System.out.println(engineerName);
+        System.out.println("エンジニア名が入力されました: " + engineerName + "です");
+        // 単価振り分け処理
+        int price;
+        while (true) {
+            System.out.println("単価を教えてください(1以上の整数)");
+            String input = scanner.nextLine();
+            if (Objects.equals(input, "M")) {
+                    System.out.println("メインメニューに戻ります");
+                    return;
+            }
+            try {
+                int inputNum = Integer.parseInt(input);
+                // 正の整数なら単価として処理する
+                if (inputNum > 0) {
+                    price = inputNum;
+                    break;
+                }
+                // 0ならループに戻る
+            } catch (NumberFormatException e) {
+                // 整数に変換できない場合はループに戻る
+            }
+        }
+        System.out.println("単価が入力されました: " + price + "です");
+        // スキル振り分け処理
+        List<String> skills = new ArrayList<>();
+        while (true) {
+            System.out.println("スキルを教えてください(カンマ区切り)");
+            System.out.println("スキルを登録しない場合は入力無しでOK");
+            String input = scanner.nextLine();
+            if (Objects.equals(input, "M")) {
+                System.out.println("メインメニューに戻ります");
+                return;
+            }
+            if (!Objects.equals(input, "")) {
+                // スキルが入力されたたら配列にいれる
+                Collections.addAll(skills, input.split("\\s+"));
+                if (skills.size() > 1) {
+                    System.out.println("スキルを登録します: ");
+                    for (int i = 0; i < skills.size(); i++) {
+                        System.out.print(skills.get(i));
+                        if (i < skills.size() - 1) {
+                            System.out.print(",");
+                        } else {
+                            System.out.println("");
+                        }
+                    }
+                }
+                break;
+            }
+            // 空文字が入力された、もしくはカンマのみが入力されたらスキルを登録せず終了
+            System.out.println("スキルを登録しません");
+        }
+        EngineerStore engineerStore = new EngineerStore();
+        // いまさらだが、skillsはListで渡したほうがよかったか？
+        engineerStore.createEngineer(engineerName, price, String.valueOf(skills));
     }
     private static void searchEngineer(Scanner scanner) {
         System.out.println("エンジニア検索処理を関数で呼び出します");
