@@ -31,13 +31,13 @@ public class Main {
     }
     private static void callMainProcess(String input) {
         switch (input) {
-            case "1": System.out.println("エンジニア登録処理を関数で呼び出します");
+            case "1": registerEngineer();
                 break;
-            case "2": System.out.println("エンジニア検索処理を関数で呼び出します");
+            case "2": searchEngineer();
                 break;
-            case "3": System.out.println("案件登録処理を関数で呼び出します");
+            case "3": registerProject();
                 break;
-            case "4": System.out.println("案件検索処理を関数で呼び出します");
+            case "4": searchProject();
                 break;
             default:
                 System.out.println("");
@@ -47,5 +47,17 @@ public class Main {
                 System.out.println("");
                 break;
         }
+    }
+    private static void registerEngineer() {
+        System.out.println("エンジニア登録処理を関数で呼び出します");
+    }
+    private static void searchEngineer() {
+        System.out.println("エンジニア検索処理を関数で呼び出します");
+    }
+    private static void registerProject() {
+        System.out.println("案件登録処理を関数で呼び出します");
+    }
+    private static void searchProject() {
+        System.out.println("案件検索処理を関数で呼び出します");
     }
 }
