@@ -18,19 +18,19 @@ public class Main {
         try (Scanner scanner = new Scanner(System.in)) {
             while (true) {
                 System.out.println("========================");
-                System.out.println("");
+                System.out.println();
                 System.out.println("=   エンジニア管理ツール   =");
-                System.out.println("");
+                System.out.println();
                 System.out.println("========================");
-                System.out.println("");
+                System.out.println();
                 System.out.println("- メインメニュー -");
-                System.out.println("");
+                System.out.println();
                 System.out.println("[1] エンジニア登録");
                 System.out.println("[2] エンジニア検索");
                 System.out.println("[3] 案件登録");
                 System.out.println("[4] 案件検索");
                 System.out.println("[E] プログラム終了");
-                System.out.println("");
+                System.out.println();
                 System.out.println("メニュー番号を選択してください");
                 String input = scanner.nextLine();
                 if (Objects.equals(input, "E")) {
@@ -52,11 +52,11 @@ public class Main {
             case "4": searchProject();
                 break;
             default:
-                System.out.println("");
+                System.out.println();
                 System.out.println("***************************");
                 System.out.println("1~4の整数か、Eを入力してください");
                 System.out.println("***************************");
-                System.out.println("");
+                System.out.println();
                 break;
         }
     }
@@ -82,11 +82,11 @@ public class Main {
             switch (engineerNameInput) {
                 case "":
                     // エラーメッセージ(使い方を表示)
-                    System.out.println("");
+                    System.out.println();
                     System.out.println("***************************");
                     System.out.println("エンジニア氏名を入力してください");
                     System.out.println("***************************");
-                    System.out.println("");
+                    System.out.println();
                     continue; // 無限ループ
                 case "M":
                 case "B":
@@ -172,11 +172,11 @@ public class Main {
     }
     private static NavigationResult displayEngineerDetails(Engineer engineer) {
         System.out.println("========================");
-        System.out.println("");
+        System.out.println();
         System.out.println("=    エンジニア詳細画面　  =");
-        System.out.println("");
+        System.out.println();
         System.out.println("========================");
-        System.out.println("");
+        System.out.println();
 
         List<String> skills = engineer.getSkills();
         String skillsListByComma = skills.isEmpty() ? "なし" : String.join(", ", skills);
@@ -190,27 +190,28 @@ public class Main {
         System.out.println("========================");
         System.out.println("　　　参画中案件情報");
         System.out.println("========================");
-        List<Participation> participations;
-        participations = assignService.getEngineerParticipation(engineer);
+        List<Participation> participations =
+                assignService.getEngineerParticipation(engineer).stream()
+                        .sorted(Comparator.comparing(Participation::getStartDate))
+                        .toList();
         if (participations.isEmpty()) {
             System.out.println("参画中の案件がありません");
         }
-
         participations.forEach(participation -> {
             System.out.println("【 案件名: " + participation.getProject().getName() + " 】");
             System.out.println("　　契約単価: " + participation.getContractPrice());
             System.out.println("　　開始日　: " + participation.getStartDate());
             System.out.println("　　終了日　: " + participation.getEndDate());
-            System.out.println("");
+            System.out.println();
         });
         // 入力を受け付ける
         while (true) {
             // 使い方を表示
-            System.out.println("");
+            System.out.println();
             System.out.println("***************************");
             System.out.println("M: メインメニュー / B: エンジニア一覧画面へ戻ります");
             System.out.println("***************************");
-            System.out.println("");
+            System.out.println();
 
             String input = scanner.nextLine();
             switch (input) {
@@ -232,11 +233,11 @@ public class Main {
     private static boolean askForConfirmation() {
         while (true) {
             // 確認画面
-            System.out.println("");
+            System.out.println();
             System.out.println("***************************");
             System.out.println("YまたはNを入力してください(Y: 登録する / N: 登録しない");
             System.out.println("***************************");
-            System.out.println("");
+            System.out.println();
 
             String input = scanner.nextLine(); // skillの登録時にinputっていう変数定義しちゃってるからここで使えないのなんか気持ち悪い
             switch (input) {
