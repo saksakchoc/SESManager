@@ -4,6 +4,11 @@ import com.aiko.ses.model.*;
 import java.util.*;
 
 public class Main {
+    private enum NavigationResult {
+        MAIN_MENU,
+        ENGINEER_LIST
+    }
+    private static final Scanner scanner = new Scanner(System.in);
     private static final EngineerStore engineerStore = new EngineerStore();
     private static final ProjectStore projectStore = new ProjectStore();
     private static final ParticipationStore participationStore = new ParticipationStore();
@@ -32,19 +37,19 @@ public class Main {
                     System.out.println("プログラムを終了します");
                     return;
                 }
-                callMainProcess(input, scanner);
+                callMainProcess(input);
             }
         }
     }
-    private static void callMainProcess(String input, Scanner scanner) {
+    private static void callMainProcess(String input) {
         switch (input) {
-            case "1": registerEngineer(scanner);
+            case "1": registerEngineer();
                 break;
-            case "2": searchEngineer(scanner);
+            case "2": searchEngineer();
                 break;
-            case "3": registerProject(scanner);
+            case "3": registerProject();
                 break;
-            case "4": searchProject(scanner);
+            case "4": searchProject();
                 break;
             default:
                 System.out.println("");
@@ -55,7 +60,19 @@ public class Main {
                 break;
         }
     }
-    private static String registerEngineer(Scanner scanner) {
+
+    // 基本機能のコントローラー（実装途中；使うときに遷移先を追加）
+    private static void mainFeatureController(NavigationResult navi) {
+        switch (navi) {
+            case ENGINEER_LIST:
+                displayEngineerList();
+                break;
+            case MAIN_MENU:
+                // メインメニューに戻るときは呼び出し元に戻す
+        }
+    }
+
+    private static NavigationResult registerEngineer() {
         System.out.println("エンジニア氏名, 単価, スキルを順番に聞いていきます");
         System.out.println("まずはエンジニア氏名を教えてください");
         // エンジニア名振り分け処理
@@ -72,9 +89,8 @@ public class Main {
                     System.out.println("");
                     continue; // 無限ループ
                 case "M":
-                    return "M";
                 case "B":
-                    return "";
+                    return NavigationResult.MAIN_MENU;
                 default:
                     engineerName = engineerNameInput;
                     break;
@@ -90,7 +106,7 @@ public class Main {
             String priceInput = scanner.nextLine();
             if (Objects.equals(priceInput, "M") || Objects.equals(priceInput, "B")) {
                 System.out.println("メインメニューに戻ります");
-                return "M";
+                return NavigationResult.MAIN_MENU;
             }
             try {
                 int inputNum = Integer.parseInt(priceInput);
@@ -115,7 +131,7 @@ public class Main {
         String skillsListByComma = "";
         if (Objects.equals(skillsInput, "M") || Objects.equals(skillsInput, "B")) {
             System.out.println("メインメニューに戻ります");
-            return "M";
+            return NavigationResult.MAIN_MENU;
         }
         if (!Objects.equals(skillsInput, "")) {
             // スキルが入力されたたら配列にいれる
@@ -137,21 +153,24 @@ public class Main {
         System.out.println("スキル: "
                 + (skills.isEmpty() ? "なし" : skillsListByComma));
         System.out.println("こちらの内容で登録してよろしいですか？");
-        if (askForConfirmation(scanner)) {
+        if (askForConfirmation()) {
             // 登録メイン処理
             // skillsはStringに変換して渡す
             Engineer engineer = engineerStore.createEngineer(engineerName, price, skills.toArray(new String[0]));
             System.out.println("エンジニアを登録しました。エンジニア詳細画面に移動します");
-            if (displayEngineerDetails(engineer, scanner).equals("M")) {
-                return "M";
+            if (displayEngineerDetails(engineer) == NavigationResult.MAIN_MENU) {
+                return NavigationResult.MAIN_MENU;
             }
         }
-        return "";
+        return NavigationResult.ENGINEER_LIST;
     }
-    private static void searchEngineer(Scanner scanner) {
+    private static void searchEngineer() {
         System.out.println("エンジニア検索処理を関数で呼び出します");
     }
-    private static String displayEngineerDetails(Engineer engineer, Scanner scanner) {
+    private static void displayEngineerList() {
+        System.out.println("エンジニア一覧メソッド");
+    }
+    private static NavigationResult displayEngineerDetails(Engineer engineer) {
         System.out.println("========================");
         System.out.println("");
         System.out.println("=    エンジニア詳細画面　  =");
@@ -174,7 +193,7 @@ public class Main {
         List<Participation> participations;
         participations = assignService.getEngineerParticipation(engineer);
         if (participations.isEmpty()) {
-            System.out.println("なし");
+            System.out.println("参画中の案件がありません");
         }
 
         participations.forEach(participation -> {
@@ -197,20 +216,20 @@ public class Main {
             switch (input) {
                 case "M":
                     System.out.println("メインメニューに戻ります");
-                    return "M";
+                    return NavigationResult.MAIN_MENU;
                 case "B":
-                    return "";
+                    return NavigationResult.ENGINEER_LIST;
                 default:
             }
         }
     }
-    private static void registerProject(Scanner scanner) {
+    private static void registerProject() {
         System.out.println("案件登録処理を関数で呼び出します");
     }
-    private static void searchProject(Scanner scanner) {
+    private static void searchProject() {
         System.out.println("案件検索処理を関数で呼び出します");
     }
-    private static boolean askForConfirmation(Scanner scanner) {
+    private static boolean askForConfirmation() {
         while (true) {
             // 確認画面
             System.out.println("");
