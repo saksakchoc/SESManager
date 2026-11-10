@@ -8,9 +8,9 @@ public class Main {
         MAIN_MENU,
         REGISTER_ENGINEER,
         SEARCH_ENGINEER,
+        ENGINEER_LIST,
         REGISTER_PROJECT,
         SEARCH_PROJECT,
-        ENGINEER_LIST
     }
     private static final Scanner scanner = new Scanner(System.in);
     private static final EngineerStore engineerStore = new EngineerStore();
@@ -66,27 +66,28 @@ public class Main {
 
     // 基本機能のコントローラー（実装途中；使うときに遷移先を追加）
     private static void mainFeatureController(NavigationResult navi) {
-        NavigationResult nextFeaturePage;
-        switch (navi) {
-            case ENGINEER_LIST:
-                nextFeaturePage = displayEngineerList();
-                break;
-            case REGISTER_ENGINEER:
-                nextFeaturePage = registerEngineer();
-                break;
-            case SEARCH_ENGINEER:
-                nextFeaturePage = searchEngineer();
-                break;
-            case REGISTER_PROJECT:
-                nextFeaturePage = registerProject();
-                break;
-            case SEARCH_PROJECT:
-                nextFeaturePage = searchProject();
-                break;
-            default:
-                return;
+        NavigationResult nextFeaturePage = navi;
+        while(true) {
+            switch (nextFeaturePage) {
+                case ENGINEER_LIST:
+                    nextFeaturePage = displayEngineerList();
+                    break;
+                case REGISTER_ENGINEER:
+                    nextFeaturePage = registerEngineer();
+                    break;
+                case SEARCH_ENGINEER:
+                    nextFeaturePage = searchEngineer();
+                    break;
+                case REGISTER_PROJECT:
+                    nextFeaturePage = registerProject();
+                    break;
+                case SEARCH_PROJECT:
+                    nextFeaturePage = searchProject();
+                    break;
+                default:
+                    return;
+            }
         }
-        mainFeatureController(nextFeaturePage);
     }
 
     private static NavigationResult registerEngineer() {
