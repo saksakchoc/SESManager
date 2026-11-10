@@ -6,6 +6,10 @@ import java.util.*;
 public class Main {
     private enum NavigationResult {
         MAIN_MENU,
+        REGISTER_ENGINEER,
+        SEARCH_ENGINEER,
+        REGISTER_PROJECT,
+        SEARCH_PROJECT,
         ENGINEER_LIST
     }
     private static final Scanner scanner = new Scanner(System.in);
@@ -15,41 +19,40 @@ public class Main {
     private static final AssignService assignService = new AssignService(participationStore);
 
     public static void main(String[] args) {
-        try (Scanner scanner = new Scanner(System.in)) {
-            while (true) {
-                System.out.println("========================");
-                System.out.println();
-                System.out.println("=   エンジニア管理ツール   =");
-                System.out.println();
-                System.out.println("========================");
-                System.out.println();
-                System.out.println("- メインメニュー -");
-                System.out.println();
-                System.out.println("[1] エンジニア登録");
-                System.out.println("[2] エンジニア検索");
-                System.out.println("[3] 案件登録");
-                System.out.println("[4] 案件検索");
-                System.out.println("[E] プログラム終了");
-                System.out.println();
-                System.out.println("メニュー番号を選択してください");
-                String input = scanner.nextLine();
-                if (Objects.equals(input, "E")) {
-                    System.out.println("プログラムを終了します");
-                    return;
-                }
-                callMainProcess(input);
+        while (true) {
+            System.out.println("========================");
+            System.out.println();
+            System.out.println("=   エンジニア管理ツール   =");
+            System.out.println();
+            System.out.println("========================");
+            System.out.println();
+            System.out.println("- メインメニュー -");
+            System.out.println();
+            System.out.println("[1] エンジニア登録");
+            System.out.println("[2] エンジニア検索");
+            System.out.println("[3] 案件登録");
+            System.out.println("[4] 案件検索");
+            System.out.println("[E] プログラム終了");
+            System.out.println();
+            System.out.println("メニュー番号を選択してください");
+            String input = scanner.nextLine();
+            if (Objects.equals(input, "E")) {
+                System.out.println("プログラムを終了します");
+                return;
             }
+            callMainProcess(input);
         }
     }
     private static void callMainProcess(String input) {
+        NavigationResult nextFeaturePage;
         switch (input) {
-            case "1": registerEngineer();
+            case "1": nextFeaturePage = mainFeatureController(NavigationResult.REGISTER_ENGINEER);
                 break;
-            case "2": searchEngineer();
+            case "2": nextFeaturePage = mainFeatureController(NavigationResult.SEARCH_ENGINEER);
                 break;
-            case "3": registerProject();
+            case "3": nextFeaturePage = mainFeatureController(NavigationResult.REGISTER_PROJECT);
                 break;
-            case "4": searchProject();
+            case "4": nextFeaturePage = mainFeatureController(NavigationResult.SEARCH_PROJECT);
                 break;
             default:
                 System.out.println();
@@ -57,19 +60,22 @@ public class Main {
                 System.out.println("1~4の整数か、Eを入力してください");
                 System.out.println("***************************");
                 System.out.println();
-                break;
+                return;
         }
+        mainFeatureController(nextFeaturePage);
+        System.out.println("メインメニューに戻ります");
     }
 
     // 基本機能のコントローラー（実装途中；使うときに遷移先を追加）
-    private static void mainFeatureController(NavigationResult navi) {
-        switch (navi) {
-            case ENGINEER_LIST:
-                displayEngineerList();
-                break;
-            case MAIN_MENU:
-                // メインメニューに戻るときは呼び出し元に戻す
-        }
+    private static NavigationResult mainFeatureController(NavigationResult navi) {
+        return switch (navi) {
+            case ENGINEER_LIST -> displayEngineerList();
+            case REGISTER_ENGINEER -> registerEngineer();
+            case SEARCH_ENGINEER -> searchEngineer();
+            case REGISTER_PROJECT -> registerProject();
+            case SEARCH_PROJECT -> searchProject();
+            case MAIN_MENU -> NavigationResult.MAIN_MENU;  // メインメニューに戻るときは呼び出し元に戻す
+        };
     }
 
     private static NavigationResult registerEngineer() {
@@ -105,7 +111,6 @@ public class Main {
             System.out.println("単価を教えてください(1以上の整数)");
             String priceInput = scanner.nextLine();
             if (Objects.equals(priceInput, "M") || Objects.equals(priceInput, "B")) {
-                System.out.println("メインメニューに戻ります");
                 return NavigationResult.MAIN_MENU;
             }
             try {
@@ -158,17 +163,39 @@ public class Main {
             // skillsはStringに変換して渡す
             Engineer engineer = engineerStore.createEngineer(engineerName, price, skills.toArray(new String[0]));
             System.out.println("エンジニアを登録しました。エンジニア詳細画面に移動します");
-            if (displayEngineerDetails(engineer) == NavigationResult.MAIN_MENU) {
-                return NavigationResult.MAIN_MENU;
+            return displayEngineerDetails(engineer);
+        } else {
+            return NavigationResult.REGISTER_ENGINEER;
+        }
+    }
+    private static NavigationResult searchEngineer() {
+        System.out.println("======== エンジニア検索画面 ========");
+        while(true) {
+            System.out.println("M-> メインメニュー / B-> メインメニュー");
+            String input = scanner.nextLine();
+            switch (input) {
+                case "M":
+                case "B":
+                    // MかBが入力されたらメインメニューに戻る
+                    return NavigationResult.MAIN_MENU;
+                default:
             }
         }
-        return NavigationResult.ENGINEER_LIST;
     }
-    private static void searchEngineer() {
-        System.out.println("エンジニア検索処理を関数で呼び出します");
-    }
-    private static void displayEngineerList() {
-        System.out.println("エンジニア一覧メソッド");
+    private static NavigationResult displayEngineerList() {
+        System.out.println("======== エンジニア一覧画面 ========");
+        while(true) {
+            System.out.println("M-> メインメニュー / B-> エンジニア検索画面");
+            String input = scanner.nextLine();
+            switch (input) {
+                case "M":
+                    return NavigationResult.MAIN_MENU;
+                case "B":
+                    // MかBが入力されたらメインメニューに戻る
+                    return NavigationResult.SEARCH_ENGINEER;
+                default:
+            }
+        }
     }
     private static NavigationResult displayEngineerDetails(Engineer engineer) {
         System.out.println("========================");
@@ -209,14 +236,13 @@ public class Main {
             // 使い方を表示
             System.out.println();
             System.out.println("***************************");
-            System.out.println("M: メインメニュー / B: エンジニア一覧画面へ戻ります");
+            System.out.println("M: メインメニュー / B: エンジニア一覧画面");
             System.out.println("***************************");
             System.out.println();
 
             String input = scanner.nextLine();
             switch (input) {
                 case "M":
-                    System.out.println("メインメニューに戻ります");
                     return NavigationResult.MAIN_MENU;
                 case "B":
                     return NavigationResult.ENGINEER_LIST;
@@ -224,11 +250,33 @@ public class Main {
             }
         }
     }
-    private static void registerProject() {
-        System.out.println("案件登録処理を関数で呼び出します");
+    private static NavigationResult registerProject() {
+        System.out.println("======== 案件登録画面 ========");
+        while(true) {
+            System.out.println("M-> メインメニュー / B-> メインメニュー");
+            String input = scanner.nextLine();
+            switch (input) {
+                case "M":
+                case "B":
+                    // MかBが入力されたらメインメニューに戻る
+                    return NavigationResult.MAIN_MENU;
+                default:
+            }
+        }
     }
-    private static void searchProject() {
-        System.out.println("案件検索処理を関数で呼び出します");
+    private static NavigationResult searchProject() {
+        System.out.println("======== 案件検索画面 ========");
+        while(true) {
+            System.out.println("M-> メインメニュー / B-> メインメニュー");
+            String input = scanner.nextLine();
+            switch (input) {
+                case "M":
+                case "B":
+                    // MかBが入力されたらメインメニューに戻る
+                    return NavigationResult.MAIN_MENU;
+                default:
+            }
+        }
     }
     private static boolean askForConfirmation() {
         while (true) {
