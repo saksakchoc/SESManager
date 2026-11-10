@@ -1,7 +1,5 @@
 package com.aiko.ses;
-import com.aiko.ses.model.EngineerStore;
-import com.aiko.ses.model.ParticipationStore;
-import com.aiko.ses.model.ProjectStore;
+import com.aiko.ses.model.*;
 
 import java.util.*;
 
@@ -9,6 +7,7 @@ public class Main {
     private static final EngineerStore engineerStore = new EngineerStore();
     private static final ProjectStore projectStore = new ProjectStore();
     private static final ParticipationStore participationStore = new ParticipationStore();
+    private static final AssignService assignService = new AssignService(participationStore);
 
     public static void main(String[] args) {
         try (Scanner scanner = new Scanner(System.in)) {
@@ -56,7 +55,7 @@ public class Main {
                 break;
         }
     }
-    private static void registerEngineer(Scanner scanner) {
+    private static String registerEngineer(Scanner scanner) {
         System.out.println("エンジニア氏名, 単価, スキルを順番に聞いていきます");
         System.out.println("まずはエンジニア氏名を教えてください");
         // エンジニア名振り分け処理
@@ -73,9 +72,9 @@ public class Main {
                     System.out.println("");
                     continue; // 無限ループ
                 case "M":
+                    return "M";
                 case "B":
-                    System.out.println("メインメニューに戻ります");
-                    return;
+                    return "";
                 default:
                     engineerName = engineerNameInput;
                     break;
@@ -90,8 +89,8 @@ public class Main {
             System.out.println("単価を教えてください(1以上の整数)");
             String priceInput = scanner.nextLine();
             if (Objects.equals(priceInput, "M") || Objects.equals(priceInput, "B")) {
-                    System.out.println("メインメニューに戻ります");
-                    return;
+                System.out.println("メインメニューに戻ります");
+                return "M";
             }
             try {
                 int inputNum = Integer.parseInt(priceInput);
@@ -116,7 +115,7 @@ public class Main {
         String skillsListByComma = "";
         if (Objects.equals(skillsInput, "M") || Objects.equals(skillsInput, "B")) {
             System.out.println("メインメニューに戻ります");
-            return;
+            return "M";
         }
         if (!Objects.equals(skillsInput, "")) {
             // スキルが入力されたたら配列にいれる
@@ -141,12 +140,69 @@ public class Main {
         if (askForConfirmation(scanner)) {
             // 登録メイン処理
             // skillsはStringに変換して渡す
-            engineerStore.createEngineer(engineerName, price, skills.toArray(new String[0]));
+            Engineer engineer = engineerStore.createEngineer(engineerName, price, skills.toArray(new String[0]));
             System.out.println("エンジニアを登録しました。エンジニア詳細画面に移動します");
+            if (displayEngineerDetails(engineer, scanner).equals("M")) {
+                return "M";
+            }
         }
+        return "";
     }
     private static void searchEngineer(Scanner scanner) {
         System.out.println("エンジニア検索処理を関数で呼び出します");
+    }
+    private static String displayEngineerDetails(Engineer engineer, Scanner scanner) {
+        System.out.println("========================");
+        System.out.println("");
+        System.out.println("=    エンジニア詳細画面　  =");
+        System.out.println("");
+        System.out.println("========================");
+        System.out.println("");
+
+        List<String> skills = engineer.getSkills();
+        String skillsListByComma = skills.isEmpty() ? "なし" : String.join(", ", skills);
+
+        System.out.println("========================");
+        System.out.println("　　　　エンジニア情報");
+        System.out.println("========================");
+        System.out.println("エンジニア名: " + engineer.getName());
+        System.out.println("単価　　　　: " + engineer.getPrice());
+        System.out.println("スキル　　　: " + skillsListByComma);
+        System.out.println("========================");
+        System.out.println("　　　参画中案件情報");
+        System.out.println("========================");
+        List<Participation> participations;
+        participations = assignService.getEngineerParticipation(engineer);
+        if (participations.isEmpty()) {
+            System.out.println("なし");
+        }
+
+        participations.forEach(participation -> {
+            System.out.println("【 案件名: " + participation.getProject().getName() + " 】");
+            System.out.println("　　契約単価: " + participation.getContractPrice());
+            System.out.println("　　開始日　: " + participation.getStartDate());
+            System.out.println("　　終了日　: " + participation.getEndDate());
+            System.out.println("");
+        });
+        // 入力を受け付ける
+        while (true) {
+            // 使い方を表示
+            System.out.println("");
+            System.out.println("***************************");
+            System.out.println("M: メインメニュー / B: エンジニア一覧画面へ戻ります");
+            System.out.println("***************************");
+            System.out.println("");
+
+            String input = scanner.nextLine();
+            switch (input) {
+                case "M":
+                    System.out.println("メインメニューに戻ります");
+                    return "M";
+                case "B":
+                    return "";
+                default:
+            }
+        }
     }
     private static void registerProject(Scanner scanner) {
         System.out.println("案件登録処理を関数で呼び出します");
@@ -155,9 +211,14 @@ public class Main {
         System.out.println("案件検索処理を関数で呼び出します");
     }
     private static boolean askForConfirmation(Scanner scanner) {
-        System.out.println("Y/Nを入力してください(Y: OK / N: キャンセル");
-        // 確認画面
         while (true) {
+            // 確認画面
+            System.out.println("");
+            System.out.println("***************************");
+            System.out.println("YまたはNを入力してください(Y: 登録する / N: 登録しない");
+            System.out.println("***************************");
+            System.out.println("");
+
             String input = scanner.nextLine(); // skillの登録時にinputっていう変数定義しちゃってるからここで使えないのなんか気持ち悪い
             switch (input) {
                 case "Y":
@@ -168,12 +229,6 @@ public class Main {
                     // Nが入力されたらfalseを返す
                     return false;
                 default:
-                    // エラーメッセージ(使い方を表示)
-                    System.out.println("");
-                    System.out.println("***************************");
-                    System.out.println("YまたはNを入力してください(Y: 登録する / N: 登録しない");
-                    System.out.println("***************************");
-                    System.out.println("");
             }
         }
     }
