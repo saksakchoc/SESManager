@@ -44,15 +44,14 @@ public class Main {
         }
     }
     private static void callMainProcess(String input) {
-        NavigationResult nextFeaturePage;
         switch (input) {
-            case "1": nextFeaturePage = mainFeatureController(NavigationResult.REGISTER_ENGINEER);
+            case "1": mainFeatureController(NavigationResult.REGISTER_ENGINEER);
                 break;
-            case "2": nextFeaturePage = mainFeatureController(NavigationResult.SEARCH_ENGINEER);
+            case "2": mainFeatureController(NavigationResult.SEARCH_ENGINEER);
                 break;
-            case "3": nextFeaturePage = mainFeatureController(NavigationResult.REGISTER_PROJECT);
+            case "3": mainFeatureController(NavigationResult.REGISTER_PROJECT);
                 break;
-            case "4": nextFeaturePage = mainFeatureController(NavigationResult.SEARCH_PROJECT);
+            case "4": mainFeatureController(NavigationResult.SEARCH_PROJECT);
                 break;
             default:
                 System.out.println();
@@ -62,20 +61,32 @@ public class Main {
                 System.out.println();
                 return;
         }
-        mainFeatureController(nextFeaturePage);
         System.out.println("メインメニューに戻ります");
     }
 
     // 基本機能のコントローラー（実装途中；使うときに遷移先を追加）
-    private static NavigationResult mainFeatureController(NavigationResult navi) {
-        return switch (navi) {
-            case ENGINEER_LIST -> displayEngineerList();
-            case REGISTER_ENGINEER -> registerEngineer();
-            case SEARCH_ENGINEER -> searchEngineer();
-            case REGISTER_PROJECT -> registerProject();
-            case SEARCH_PROJECT -> searchProject();
-            case MAIN_MENU -> NavigationResult.MAIN_MENU;  // メインメニューに戻るときは呼び出し元に戻す
-        };
+    private static void mainFeatureController(NavigationResult navi) {
+        NavigationResult nextFeaturePage;
+        switch (navi) {
+            case ENGINEER_LIST:
+                nextFeaturePage = displayEngineerList();
+                break;
+            case REGISTER_ENGINEER:
+                nextFeaturePage = registerEngineer();
+                break;
+            case SEARCH_ENGINEER:
+                nextFeaturePage = searchEngineer();
+                break;
+            case REGISTER_PROJECT:
+                nextFeaturePage = registerProject();
+                break;
+            case SEARCH_PROJECT:
+                nextFeaturePage = searchProject();
+                break;
+            default:
+                return;
+        }
+        mainFeatureController(nextFeaturePage);
     }
 
     private static NavigationResult registerEngineer() {
