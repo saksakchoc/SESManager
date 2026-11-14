@@ -12,7 +12,7 @@ class EngineerStoreTest {
         es.createEngineer("あいこ2", 45, "Java");
         Engineer engineer3 = es.createEngineer("あいこ3", 45, "Java");
         es.createEngineer("あいこ4", 45, "Java");
-        assertEquals(engineer3.getId(), 3);
+        assertEquals(3, engineer3.getId());
     }
     @Test
     void createEngineer_エンジニアオブジェクトを作成して返す() {
@@ -47,8 +47,21 @@ class EngineerStoreTest {
         es.createEngineer("あいこ", 45, "Java");
         es.createEngineer("あいこ2", 50, "Java, JavaScript");
         es.createEngineer("あいこ3", 100, "Java, JavaScript, AWS");
-        assertEquals(es.countEngineers(), 3);
+        assertEquals(3, es.countEngineers());
     }
-
-
+    @Test
+    void getEngineers_エンジニアを全件取得_0件() {
+        EngineerStore es = new EngineerStore();
+        assertEquals(0,es.getEngineers().size());
+    }
+    @Test
+    void getEngineers_エンジニアを全件取得_複数件() {
+        EngineerStore es = new EngineerStore();
+        Engineer engineer1 = es.createEngineer("あいこ", 45, "Java");
+        Engineer engineer2 = es.createEngineer("あいこ2", 50, "Java, JavaScript");
+        Engineer engineer3 = es.createEngineer("あいこ3", 100, "Java, JavaScript, AWS");
+        assertEquals(engineer1, es.getEngineers().get(0));
+        assertEquals(engineer2, es.getEngineers().get(1));
+        assertEquals(engineer3, es.getEngineers().get(2));
+    }
 }

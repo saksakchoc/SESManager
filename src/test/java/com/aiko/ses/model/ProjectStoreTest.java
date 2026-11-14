@@ -15,7 +15,7 @@ class ProjectStoreTest {
         es.createProject("A社基幹システム改修2" , 40, 60, LocalDate.parse("2026-04-01"), LocalDate.parse("2027-03-31"));
         Project project3 = es.createProject("A社基幹システム改修3" , 40, 60, LocalDate.parse("2026-04-01"), LocalDate.parse("2027-03-31"));
         es.createProject("A社基幹システム改修3" , 40, 60, LocalDate.parse("2026-04-01"), LocalDate.parse("2027-03-31"));
-        assertEquals(project3.getId(), 3);
+        assertEquals(3, project3.getId());
     }
     @Test
     void createProject_案件オブジェクトを作成して返す() {
@@ -27,38 +27,53 @@ class ProjectStoreTest {
     @Test
     void createProject_案件オブジェクトが配列に追加される() {
         ProjectStore es = new ProjectStore();
-        Project project1 = es.createProject("A社基幹システム改修" , 40, 60, LocalDate.parse("2026-04-01"), LocalDate.parse("2027-03-31"));;
+        Project project1 = es.createProject("A社基幹システム改修" , 40, 60, LocalDate.parse("2026-04-01"), LocalDate.parse("2027-03-31"));
         assertEquals(project1 ,es.getProject(1));
     }
     @Test
     void getProject_案件オブジェクトが想定通り取得できる() {
         ProjectStore es = new ProjectStore();
-        Project project = es.createProject("A社基幹システム改修" , 40, 60, LocalDate.parse("2026-04-01"), LocalDate.parse("2027-03-31"));;
+        Project project = es.createProject("A社基幹システム改修" , 40, 60, LocalDate.parse("2026-04-01"), LocalDate.parse("2027-03-31"));
         assertEquals(es.getProject(1), project);
     }
     @Test
     void getProject_存在しないIDならnullを返す() {
         ProjectStore es = new ProjectStore();
-        es.createProject("A社基幹システム改修" , 40, 60, LocalDate.parse("2026-04-01"), LocalDate.parse("2027-03-31"));;
+        es.createProject("A社基幹システム改修" , 40, 60, LocalDate.parse("2026-04-01"), LocalDate.parse("2027-03-31"));
         assertNull(es.getProject(2));
     }
 
     @Test
     void countProjects_案件配列のサイズが取得できる() {
         ProjectStore es = new ProjectStore();
-        es.createProject("A社基幹システム改修1" , 40, 60, LocalDate.parse("2026-04-01"), LocalDate.parse("2027-03-31"));;
-        es.createProject("A社基幹システム改修2" , 40, 60, LocalDate.parse("2026-04-01"), LocalDate.parse("2027-03-31"));;
-        es.createProject("A社基幹システム改修3" , 40, 60, LocalDate.parse("2026-04-01"), LocalDate.parse("2027-03-31"));;
-        assertEquals(es.countProjects(), 3);
+        es.createProject("A社基幹システム改修1" , 40, 60, LocalDate.parse("2026-04-01"), LocalDate.parse("2027-03-31"));
+        es.createProject("A社基幹システム改修2" , 40, 60, LocalDate.parse("2026-04-01"), LocalDate.parse("2027-03-31"));
+        es.createProject("A社基幹システム改修3" , 40, 60, LocalDate.parse("2026-04-01"), LocalDate.parse("2027-03-31"));
+        assertEquals(3, es.countProjects());
     }
 
     @Test
     void createProject_引数が不正なら案件作成エラー() {
         ProjectStore es = new ProjectStore();
 
-        assertThrows(IllegalArgumentException.class, () -> {
-            es.createProject("A銀行基幹システム更改",40,100, LocalDate.parse("2026-05-01"),LocalDate.parse("2026-03-31"));
-        });
+        assertThrows(IllegalArgumentException.class, () ->
+            es.createProject("A銀行基幹システム更改",40,100, LocalDate.parse("2026-05-01"),LocalDate.parse("2026-03-31"))
+        );
+    }
+    @Test
+    void getProjects_案件を全件取得_0件() {
+        ProjectStore es = new ProjectStore();
+        assertEquals(0, es.getProjects().size());
+    }
+    @Test
+    void getProjects_案件を全件取得_複数件() {
+        ProjectStore es = new ProjectStore();
+        Project project1 = es.createProject("A社基幹システム改修1" , 40, 60, LocalDate.parse("2026-04-01"), LocalDate.parse("2027-03-31"));
+        Project project2 = es.createProject("A社基幹システム改修2" , 60, 80, LocalDate.parse("2026-04-01"), LocalDate.parse("2027-03-31"));
+        Project project3 = es.createProject("A社基幹システム改修3" , 80, 100, LocalDate.parse("2026-04-01"), LocalDate.parse("2027-03-31"));
+        assertEquals(project1, es.getProjects().get(0));
+        assertEquals(project2, es.getProjects().get(1));
+        assertEquals(project3, es.getProjects().get(2));
     }
 
 }

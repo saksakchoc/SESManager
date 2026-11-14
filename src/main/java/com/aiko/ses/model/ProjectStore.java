@@ -1,9 +1,14 @@
 package com.aiko.ses.model;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.List;
 
 public class ProjectStore {
     private final ArrayList<Project> projects = new ArrayList<>();
+
+    public List<Project> getProjects() {
+        return List.copyOf(projects);
+    }
 
     public Project getProject(int id) {
         for (Project project: projects) {

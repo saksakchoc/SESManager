@@ -1,8 +1,14 @@
 package com.aiko.ses.model;
 import java.util.ArrayList;
+import java.util.List;
 
 public class EngineerStore {
     private final ArrayList<Engineer> engineers = new ArrayList<>();
+
+    public List<Engineer> getEngineers() {
+        return List.copyOf(engineers);
+    }
+
     public Engineer getEngineer(int id) {
         for (Engineer engineer: engineers) {
             if(engineer.getId() == id) {
