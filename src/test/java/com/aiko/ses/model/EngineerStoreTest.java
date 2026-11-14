@@ -1,6 +1,8 @@
 package com.aiko.ses.model;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class EngineerStoreTest {
@@ -63,5 +65,31 @@ class EngineerStoreTest {
         assertEquals(engineer1, es.getEngineers().get(0));
         assertEquals(engineer2, es.getEngineers().get(1));
         assertEquals(engineer3, es.getEngineers().get(2));
+    }
+    @Test
+    void getEngineers_エンジニアを全件取得_取得したリストは編集不可() {
+        EngineerStore es = new EngineerStore();
+        es.createEngineer("あいこ", 45, "Java");
+
+        List<Engineer> engineers = es.getEngineers();
+
+        Engineer engineer2 = new Engineer(2, "あいこ3", 100, "Java, JavaScript, AWS");
+
+        assertThrows(UnsupportedOperationException.class,
+                () -> engineers.add(engineer2));
+
+    }
+    @Test
+    void getEngineers_エンジニアを全件取得_取得後にエンジニアを追加してもリストの状態は保持される() {
+        EngineerStore es = new EngineerStore();
+        es.createEngineer("あいこ", 45, "Java");
+
+        List<Engineer> engineers = es.getEngineers();
+
+        int prevEngineerListSize = engineers.size();
+
+        es.createEngineer("あいこ2", 50, "");
+
+        assertEquals(prevEngineerListSize, engineers.size());
     }
 }
