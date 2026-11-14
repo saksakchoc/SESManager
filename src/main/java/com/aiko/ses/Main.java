@@ -193,10 +193,13 @@ public class Main {
         }
     }
     private static NavigationResult searchEngineerScreen() {
+        final NavigationResult thisScreenNavigationCode = NavigationResult.SEARCH_ENGINEER;
         System.out.println("======== エンジニア検索画面 ========");
         System.out.println("テスト用に、エンジニア一覧画面（全件表示）に遷移します");
-        displayEngineerListScreen();
-
+        NavigationResult navigationResult = displayEngineerListScreen();
+        if (navigationResult != thisScreenNavigationCode) {
+            return navigationResult;
+        }
         while(true) {
             System.out.println("M-> メインメニュー / B-> メインメニュー");
             String input = scanner.nextLine();
