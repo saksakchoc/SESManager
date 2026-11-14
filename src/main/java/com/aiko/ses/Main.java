@@ -1,6 +1,5 @@
 package com.aiko.ses;
 import com.aiko.ses.model.*;
-
 import java.util.*;
 
 public class Main {
@@ -70,7 +69,7 @@ public class Main {
         while(true) {
             switch (nextFeaturePage) {
                 case ENGINEER_LIST:
-                    nextFeaturePage = displayEngineerListScreen();
+                    nextFeaturePage = displayEngineerListScreen(engineerStore.getEngineers());
                     break;
                 case REGISTER_ENGINEER:
                     nextFeaturePage = registerEngineer();
@@ -180,43 +179,43 @@ public class Main {
             return NavigationResult.REGISTER_ENGINEER;
         }
     }
-    private static List<Engineer> filterEngineers() {
-        System.out.println("エンジニアを絞り込むメインの関数");
-        return null;
-    }
-    private static void printEngineerList(List<Engineer> engineers) {
-        for (int i=0; i<engineers.size(); i++) {
-            Engineer engineer = engineers.get(i);
-            System.out.print(i+1 + " : ");
-            System.out.print(engineer.getName());
-            System.out.println();
-        }
-    }
     private static NavigationResult searchEngineerScreen() {
         final NavigationResult thisScreenNavigationCode = NavigationResult.SEARCH_ENGINEER;
         System.out.println("======== エンジニア検索画面 ========");
-        System.out.println("テスト用に、エンジニア一覧画面（全件表示）に遷移します");
-        NavigationResult navigationResult = displayEngineerListScreen();
-        if (navigationResult != thisScreenNavigationCode) {
-            return navigationResult;
-        }
         while(true) {
+            List<Engineer> engineers = new ArrayList<>();
+            System.out.println("検索方法を指定してください。");
+            System.out.println("1-> 特殊検索条件指定 / 2-> ID検索 / 3-> 全件表示");
             System.out.println("M-> メインメニュー / B-> メインメニュー");
             String input = scanner.nextLine();
             switch (input) {
+                case "1":
+                    engineers = filterEngineers();
+                    break;
+                case "2":
+                    engineers = filterEngineerById();
+                    break;
+                case "3":
+                    engineers = engineerStore.getEngineers();
+                    break;
                 case "M":
                 case "B":
                     // MかBが入力されたらメインメニューに戻る
                     return NavigationResult.MAIN_MENU;
                 default:
+                    continue;
+            }
+            NavigationResult navigationResult = displayEngineerListScreen(engineers);
+            if (navigationResult != thisScreenNavigationCode) {
+                return navigationResult;
             }
         }
     }
-    private static NavigationResult displayEngineerListScreen() {
+
+    private static NavigationResult displayEngineerListScreen(List<Engineer> engineers) {
         final NavigationResult thisScreenNavigationCode = NavigationResult.ENGINEER_LIST;
 
         System.out.println("======== エンジニア一覧画面 ========");
-        List<Engineer> engineers  = engineerStore.getEngineers();
         int engineerListSize = engineers.size();
 
         if (engineerListSize == 0) {
@@ -225,9 +224,9 @@ public class Main {
         }
 
         while(true) {
-            printEngineerList(engineers);
             System.out.println("閲覧したいエンジニアの行番号を選択してください。");
             System.out.println("M-> メインメニュー / B-> エンジニア検索画面");
+            printEngineerList(engineers);
             String input = scanner.nextLine();
             switch (input) {
                 case "M":
@@ -252,6 +251,46 @@ public class Main {
             }
         }
     }
+    private static void printEngineerList(List<Engineer> engineers) {
+        for (int i=0; i<engineers.size(); i++) {
+            Engineer engineer = engineers.get(i);
+            System.out.print(i+1 + " : ");
+            System.out.print(engineer.getName());
+            System.out.println();
+        }
+    }
+    private static List<Engineer> filterEngineerById() {
+        while(true) {
+            System.out.println("エンジニアIDを入力してください。");
+            String input = scanner.nextLine();
+            try {
+                int engineerId = Integer.parseInt(input);
+                Engineer engineer = engineerStore.getEngineer(engineerId);
+                List<Engineer> engineers = new ArrayList<Engineer>();
+                engineers.add(engineer);
+                return engineers;
+            } catch (NumberFormatException e) {
+                // 整数に変換できない場合はループに戻る
+                System.out.println("入力できる範囲の整数を入力してください。");
+            } catch (IllegalArgumentException e) {
+                System.out.println("入力されたIDに該当するエンジニアがいません。");
+            }
+        }
+    }
+    private static List<Engineer> filterEngineers() {
+        while(true) {
+            System.out.println("検索方法を指定してください");
+            System.out.println("M-> メインメニュー / B-> メインメニュー");
+            String input = scanner.nextLine();
+            switch (input) {
+                case "M":
+                case "B":
+                    // MかBが入力されたらほんとうはメインメニューに戻るんだけど、どうやってNavigationResultを返すか相談したい。返り値を2つもたせる？
+                default:
+                    return engineerStore.getEngineers();
+            }
+        }
+    }
     private static NavigationResult displayEngineerDetails(Engineer engineer) {
         System.out.println("========================");
         System.out.println();
@@ -266,6 +305,7 @@ public class Main {
         System.out.println("========================");
         System.out.println("　　　　エンジニア情報");
         System.out.println("========================");
+        System.out.println("エンジニアID: " + engineer.getId());
         System.out.println("エンジニア名: " + engineer.getName());
         System.out.println("単価　　　　: " + engineer.getPrice());
         System.out.println("スキル　　　: " + skillsListByComma);
@@ -280,7 +320,9 @@ public class Main {
             System.out.println("参画中の案件がありません");
         }
         participations.forEach(participation -> {
-            System.out.println("【 案件名: " + participation.getProject().getName() + " 】");
+            Project project = participation.getProject();
+            System.out.println("【 案件名: " + project.getName() + " 】");
+            System.out.println("　　案件ID: " + project.getId());
             System.out.println("　　契約単価: " + participation.getContractPrice());
             System.out.println("　　開始日　: " + participation.getStartDate());
             System.out.println("　　終了日　: " + participation.getEndDate());
