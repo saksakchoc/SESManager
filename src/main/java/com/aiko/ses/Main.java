@@ -188,7 +188,8 @@ public class Main {
         for (int i=0; i<engineers.size(); i++) {
             Engineer engineer = engineers.get(i);
             System.out.print(i+1 + " : ");
-            System.out.print(engineer.getName() +  " : ");
+            System.out.print(engineer.getName());
+            System.out.println();
         }
     }
     private static NavigationResult searchEngineerScreen() {
