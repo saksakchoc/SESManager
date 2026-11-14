@@ -266,7 +266,10 @@ public class Main {
             try {
                 int engineerId = Integer.parseInt(input);
                 Engineer engineer = engineerStore.getEngineer(engineerId);
-                List<Engineer> engineers = new ArrayList<Engineer>();
+                if (engineer == null) {
+                    throw new IllegalArgumentException("入力されたIDに該当するエンジニアがいません。");
+                }
+                List<Engineer> engineers = new ArrayList<>();
                 engineers.add(engineer);
                 return engineers;
             } catch (NumberFormatException e) {
