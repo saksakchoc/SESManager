@@ -186,7 +186,7 @@ public class Main {
             List<Engineer> engineers;
             System.out.println("検索方法を指定してください。");
             System.out.println("1-> 特殊検索条件指定 / 2-> ID検索 / 3-> 全件表示");
-            System.out.println("M-> メインメニュー / B-> メインメニュー");
+            System.out.println("通常メニュー: M-> メインメニュー / B-> メインメニュー");
             String input = scanner.nextLine();
             switch (input) {
                 case "1":
@@ -289,6 +289,7 @@ public class Main {
         while(true) {
             System.out.println("検索方法を指定してください");
             System.out.println("M-> メインメニュー / B-> メインメニュー");
+            System.out.println("通常メニュー: M-> メインメニュー / B-> メインメニュー");
             String input = scanner.nextLine();
             switch (input) {
                 case "M":
@@ -358,7 +359,7 @@ public class Main {
     private static NavigationResult registerProject() {
         System.out.println("======== 案件登録画面 ========");
         while(true) {
-            System.out.println("M-> メインメニュー / B-> メインメニュー");
+            System.out.println("通常メニュー: M-> メインメニュー / B-> メインメニュー");
             String input = scanner.nextLine();
             switch (input) {
                 case "M":
@@ -372,7 +373,7 @@ public class Main {
     private static NavigationResult searchProject() {
         System.out.println("======== 案件検索画面 ========");
         while(true) {
-            System.out.println("M-> メインメニュー / B-> メインメニュー");
+            System.out.println("通常メニュー: M-> メインメニュー / B-> メインメニュー");
             String input = scanner.nextLine();
             switch (input) {
                 case "M":
