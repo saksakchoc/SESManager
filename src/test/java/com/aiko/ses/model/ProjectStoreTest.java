@@ -77,7 +77,7 @@ class ProjectStoreTest {
         assertEquals(project3, es.getProjects().get(2));
     }
     @Test
-    void getProjects_エンジニアを全件取得_取得したリストは編集不可() {
+    void getProjects_プロジェクトを全件取得_取得したリストは編集不可() {
         ProjectStore es = new ProjectStore();
         es.createProject("A社基幹システム改修1" , 40, 60, LocalDate.parse("2026-04-01"), LocalDate.parse("2027-03-31"));
 
@@ -90,7 +90,7 @@ class ProjectStoreTest {
 
     }
     @Test
-    void getProjects_エンジニアを全件取得_取得後にエンジニアを追加してもリストの状態は保持される() {
+    void getProjects_プロジェクトを全件取得_取得後にエンジニアを追加してもリストの状態は保持される() {
         ProjectStore es = new ProjectStore();
         es.createProject("A社基幹システム改修1" , 40, 60, LocalDate.parse("2026-04-01"), LocalDate.parse("2027-03-31"));
 
