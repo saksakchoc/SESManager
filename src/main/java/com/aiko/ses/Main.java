@@ -218,6 +218,12 @@ public class Main {
         System.out.println("======== エンジニア一覧画面 ========");
         List<Engineer> engineers  = engineerStore.getEngineers();
         int engineerListSize = engineers.size();
+
+        if (engineerListSize == 0) {
+            System.out.println("該当するエンジニアが見つかりません");
+            return NavigationResult.SEARCH_ENGINEER;
+        }
+
         while(true) {
             printEngineerList(engineers);
             System.out.println("閲覧したいエンジニアの行番号を選択してください。");
