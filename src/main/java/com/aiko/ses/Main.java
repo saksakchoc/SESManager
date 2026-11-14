@@ -70,13 +70,13 @@ public class Main {
         while(true) {
             switch (nextFeaturePage) {
                 case ENGINEER_LIST:
-                    nextFeaturePage = displayEngineerList();
+                    nextFeaturePage = displayEngineerListScreen();
                     break;
                 case REGISTER_ENGINEER:
                     nextFeaturePage = registerEngineer();
                     break;
                 case SEARCH_ENGINEER:
-                    nextFeaturePage = searchEngineer();
+                    nextFeaturePage = searchEngineerScreen();
                     break;
                 case REGISTER_PROJECT:
                     nextFeaturePage = registerProject();
@@ -180,7 +180,18 @@ public class Main {
             return NavigationResult.REGISTER_ENGINEER;
         }
     }
-    private static NavigationResult searchEngineer() {
+    private static List<Engineer> filterEngineers() {
+        System.out.println("エンジニアを絞り込むメインの関数");
+        return null;
+    }
+    private static void printEngineerList(List<Engineer> engineers) {
+        for (int i=0; i<engineers.size(); i++) {
+            Engineer engineer = engineers.get(i);
+            System.out.print(i+1 + " : ");
+            System.out.print(engineer.getName() +  " : ");
+        }
+    }
+    private static NavigationResult searchEngineerScreen() {
         System.out.println("======== エンジニア検索画面 ========");
         while(true) {
             System.out.println("M-> メインメニュー / B-> メインメニュー");
@@ -194,9 +205,12 @@ public class Main {
             }
         }
     }
-    private static NavigationResult displayEngineerList() {
+    private static NavigationResult displayEngineerListScreen() {
         System.out.println("======== エンジニア一覧画面 ========");
+        List<Engineer> engineers  = engineerStore.getEngineers();
+
         while(true) {
+            printEngineerList(engineers);
             System.out.println("M-> メインメニュー / B-> エンジニア検索画面");
             String input = scanner.nextLine();
             switch (input) {
