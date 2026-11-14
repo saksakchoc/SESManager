@@ -194,6 +194,9 @@ public class Main {
     }
     private static NavigationResult searchEngineerScreen() {
         System.out.println("======== エンジニア検索画面 ========");
+        System.out.println("テスト用に、エンジニア一覧画面（全件表示）に遷移します");
+        displayEngineerListScreen();
+
         while(true) {
             System.out.println("M-> メインメニュー / B-> メインメニュー");
             String input = scanner.nextLine();
@@ -209,9 +212,10 @@ public class Main {
     private static NavigationResult displayEngineerListScreen() {
         System.out.println("======== エンジニア一覧画面 ========");
         List<Engineer> engineers  = engineerStore.getEngineers();
-
+        int engineerListSize = engineers.size();
         while(true) {
             printEngineerList(engineers);
+            System.out.println("閲覧したいエンジニアの行番号を選択してください。");
             System.out.println("M-> メインメニュー / B-> エンジニア検索画面");
             String input = scanner.nextLine();
             switch (input) {
@@ -221,6 +225,16 @@ public class Main {
                     // MかBが入力されたらメインメニューに戻る
                     return NavigationResult.SEARCH_ENGINEER;
                 default:
+                    try {
+                        int rowNumber = Integer.parseInt(input);
+                        if (rowNumber <= 0 || rowNumber > engineerListSize) {
+                            throw new IllegalArgumentException("入力された数値の範囲が、エンジニアの人数より多い、または0以下です");
+                        }
+                        Engineer selectedEngineer = engineers.get(rowNumber - 1);
+                        displayEngineerDetails(selectedEngineer);
+                    } catch (IllegalArgumentException e) {
+                        System.out.println("行番号(1～" + engineerListSize + "の整数、またはM/Bを入力してください");
+                    }
             }
         }
     }
