@@ -210,6 +210,8 @@ public class Main {
         }
     }
     private static NavigationResult displayEngineerListScreen() {
+        final NavigationResult thisScreenNavigationCode = NavigationResult.ENGINEER_LIST;
+
         System.out.println("======== エンジニア一覧画面 ========");
         List<Engineer> engineers  = engineerStore.getEngineers();
         int engineerListSize = engineers.size();
@@ -231,7 +233,10 @@ public class Main {
                             throw new IllegalArgumentException("入力された数値の範囲が、エンジニアの人数より多い、または0以下です");
                         }
                         Engineer selectedEngineer = engineers.get(rowNumber - 1);
-                        displayEngineerDetails(selectedEngineer);
+                        NavigationResult navigationResult = displayEngineerDetails(selectedEngineer);
+                        if (navigationResult != thisScreenNavigationCode) {
+                            return navigationResult;
+                        }
                     } catch (IllegalArgumentException e) {
                         System.out.println("行番号(1～" + engineerListSize + "の整数、またはM/Bを入力してください");
                     }
