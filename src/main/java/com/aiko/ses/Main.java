@@ -183,7 +183,7 @@ public class Main {
         final NavigationResult thisScreenNavigationCode = NavigationResult.SEARCH_ENGINEER;
         System.out.println("======== エンジニア検索画面 ========");
         while(true) {
-            List<Engineer> engineers = new ArrayList<>();
+            List<Engineer> engineers;
             System.out.println("検索方法を指定してください。");
             System.out.println("1-> 特殊検索条件指定 / 2-> ID検索 / 3-> 全件表示");
             System.out.println("M-> メインメニュー / B-> メインメニュー");
@@ -193,8 +193,7 @@ public class Main {
                     engineers = filterEngineers();
                     break;
                 case "2":
-                    engineers = filterEngineerById();
-                    break;
+                    return searchEngineerByIdScreen();
                 case "3":
                     engineers = engineerStore.getEngineers();
                     break;
@@ -259,24 +258,30 @@ public class Main {
             System.out.println();
         }
     }
-    private static List<Engineer> filterEngineerById() {
+    private static NavigationResult searchEngineerByIdScreen() {
         while(true) {
             System.out.println("エンジニアIDを入力してください。");
             String input = scanner.nextLine();
-            try {
-                int engineerId = Integer.parseInt(input);
-                Engineer engineer = engineerStore.getEngineer(engineerId);
-                if (engineer == null) {
-                    throw new IllegalArgumentException("入力されたIDに該当するエンジニアがいません。");
-                }
-                List<Engineer> engineers = new ArrayList<>();
-                engineers.add(engineer);
-                return engineers;
-            } catch (NumberFormatException e) {
-                // 整数に変換できない場合はループに戻る
-                System.out.println("入力できる範囲の整数を入力してください。");
-            } catch (IllegalArgumentException e) {
-                System.out.println("入力されたIDに該当するエンジニアがいません。");
+            switch(input) {
+                case "M":
+                    return NavigationResult.MAIN_MENU;
+                case "B":
+                    return NavigationResult.SEARCH_ENGINEER;
+                default:
+                    try {
+                        int engineerId = Integer.parseInt(input);
+                        Engineer engineer = engineerStore.getEngineer(engineerId);
+                        if (engineer == null) {
+                            throw new IllegalArgumentException("入力されたIDに該当するエンジニアがいません。");
+                        }
+                        return displayEngineerDetails(engineer);
+                    } catch (NumberFormatException e) {
+                        // 整数に変換できない場合はループに戻る
+                        System.out.println("入力できる範囲の整数を入力してください。");
+                    } catch (IllegalArgumentException e) {
+                        System.out.println("入力されたIDに該当するエンジニアがいません。");
+                    }
+
             }
         }
     }
