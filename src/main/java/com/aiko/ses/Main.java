@@ -1,5 +1,8 @@
 package com.aiko.ses;
 import com.aiko.ses.model.*;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.*;
 
 public class Main {
@@ -183,19 +186,20 @@ public class Main {
         final NavigationResult thisScreenNavigationCode = NavigationResult.SEARCH_ENGINEER;
         System.out.println("======== エンジニア検索画面 ========");
         while(true) {
-            List<Engineer> engineers;
+            NavigationResult navigationResult;
             System.out.println("検索方法を指定してください。");
             System.out.println("1-> 特殊検索条件指定 / 2-> ID検索 / 3-> 全件表示");
             System.out.println("通常メニュー: M-> メインメニュー / B-> メインメニュー");
             String input = scanner.nextLine();
             switch (input) {
                 case "1":
-                    engineers = filterEngineers();
+                    navigationResult = searchEngineersBySkillAndAssignStatus();
                     break;
                 case "2":
-                    return searchEngineerByIdScreen();
+                    navigationResult = searchEngineerByIdScreen();
+                    break;
                 case "3":
-                    engineers = engineerStore.getEngineers();
+                    navigationResult = displayEngineerListScreen(engineerStore.getEngineers());
                     break;
                 case "M":
                 case "B":
@@ -204,7 +208,6 @@ public class Main {
                 default:
                     continue;
             }
-            NavigationResult navigationResult = displayEngineerListScreen(engineers);
             if (navigationResult != thisScreenNavigationCode) {
                 return navigationResult;
             }
@@ -285,19 +288,107 @@ public class Main {
             }
         }
     }
-    private static List<Engineer> filterEngineers() {
+    private static NavigationResult searchEngineersBySkillAndAssignStatus() {
         while(true) {
-            System.out.println("検索方法を指定してください");
-            System.out.println("M-> メインメニュー / B-> メインメニュー");
+            List<Engineer> engineers = engineerStore.getEngineers();
+            List<Engineer> filteredEngineersBySkills;
+
+            System.out.println("スキルセット、参画状態を順番にお聞きします。");
+            System.out.println("まずはスキルセットについて入力してください。");
+            System.out.println("スキルを複数指定したい場合、カンマ区切りで入力してください。");
+            System.out.println("スキルを指定しない場合、入力せずEnterを押してください。");
             System.out.println("通常メニュー: M-> メインメニュー / B-> メインメニュー");
-            String input = scanner.nextLine();
-            switch (input) {
+            String skillsInput = scanner.nextLine();
+            List<String> skills = new ArrayList<>();
+            switch (skillsInput) {
                 case "M":
+                    return NavigationResult.MAIN_MENU;
                 case "B":
-                    // MかBが入力されたらほんとうはメインメニューに戻るんだけど、どうやってNavigationResultを返すか相談したい。返り値を2つもたせる？
+                    return NavigationResult.SEARCH_ENGINEER;
                 default:
-                    return engineerStore.getEngineers();
+                    Collections.addAll(skills, skillsInput.split(","));
+                    if (!skills.isEmpty()) {
+                        String skillsListByComma = String.join(", ", skills);
+                        filteredEngineersBySkills = engineers.stream().filter(engineer -> assignService.isAvailableBySkills(engineer, skills)).toList();
+                        System.out.println("スキルを登録します: " + skillsListByComma);
+                    } else {
+                        // 入力なし／カンマのみが入力されたらスキルを登録せず終了
+                        filteredEngineersBySkills = engineers;
+                        System.out.println("スキルを登録しません");
+                    }
             }
+            List<Engineer> filteredEngineersByAssignedStatus;
+            System.out.println("参画状態の検索方法を指定してください。");
+            System.out.println("1：現在未参画 / 2: 日付指定未参画 / 3: 参画状態不問");
+            System.out.println("通常メニュー: M-> メインメニュー / B-> メインメニュー");
+            String assignedStatusInput = scanner.nextLine();
+            switch (assignedStatusInput) {
+                case "M":
+                    return NavigationResult.MAIN_MENU;
+                case "B":
+                    return NavigationResult.SEARCH_ENGINEER;
+                case "1":
+                    /* 本日日付に参画情報があるエンジニアを除く */
+                    filteredEngineersByAssignedStatus = filteredEngineersBySkills.stream().filter(engineer -> !assignService.isAssignedForDate(engineer, LocalDate.now())).toList();
+                    break;
+                case "2":
+                    /* 対象期間に参画情報があるエンジニアを除く */
+                    LocalDate startDate;
+                    while(true) {
+                        System.out.println("対象期間開始日を入力してください。(形式: yyyy-mm-dd)");
+                        String startDateInput = scanner.nextLine();
+                        switch(startDateInput) {
+                            case "M":
+                                return NavigationResult.MAIN_MENU;
+                            case "B":
+                                return NavigationResult.SEARCH_ENGINEER;
+                            default:
+                                try {
+                                    startDate = LocalDate.parse(startDateInput);
+                                    break;
+                                } catch (DateTimeParseException e) {
+                                    System.out.println("日付を yyyy-MM-dd 形式で入力してください。");
+                                    continue;
+                                }
+                        }
+                        break;
+                    }
+                    LocalDate endDate;
+                    while(true) {
+                        System.out.println("対象期間終了日を入力してください。(形式: yyyy-MM-dd)");
+                        String endDateInput = scanner.nextLine();
+                        switch(endDateInput) {
+                            case "M":
+                                return NavigationResult.MAIN_MENU;
+                            case "B":
+                                return NavigationResult.SEARCH_ENGINEER;
+                            default:
+                                try {
+                                    endDate = LocalDate.parse(endDateInput);
+                                    LocalDate finalStartDate = startDate;
+                                    LocalDate finalEndDate = endDate;
+                                    filteredEngineersByAssignedStatus = filteredEngineersBySkills.stream().filter(engineer -> assignService.isAvailableByPeriod(engineer, finalStartDate, finalEndDate)).toList();
+                                    break;
+                                } catch (DateTimeParseException e) {
+                                    System.out.println("日付を yyyy-MM-dd 形式で入力してください。");
+                                    continue;
+                                } catch (IllegalArgumentException e) {
+                                    System.out.println("期間開始日 < 期間終了日となるように入力してください。");
+                                    continue;
+                                }
+                        }
+                        break;
+                    }
+                    break;
+                case "3":
+                    filteredEngineersByAssignedStatus = filteredEngineersBySkills;
+                    break;
+                default:
+                    continue;
+            }
+            System.out.println();
+            System.out.println("検索結果を表示します。");
+            displayEngineerListScreen(filteredEngineersByAssignedStatus);
         }
     }
     private static NavigationResult displayEngineerDetails(Engineer engineer) {
