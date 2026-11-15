@@ -143,27 +143,39 @@ public class Main {
         }
         System.out.println("単価が入力されました: " + price + "です");
         // スキル振り分け処理
+        List<String> inputSkills = new ArrayList<>();
         List<String> skills = new ArrayList<>();
         System.out.println("スキルを教えてください(カンマ区切り)");
         System.out.println("スキルを登録しない場合は入力無しでOK");
-        String skillsInput = scanner.nextLine();
-        String skillsListByComma = "";
-        if (Objects.equals(skillsInput, "M") || Objects.equals(skillsInput, "B")) {
+        String skillsInputStr = scanner.nextLine();
+        if (Objects.equals(skillsInputStr, "M") || Objects.equals(skillsInputStr, "B")) {
             System.out.println("メインメニューに戻ります");
             return NavigationResult.MAIN_MENU;
         }
-        if (!Objects.equals(skillsInput, "")) {
+        StringBuilder skillsListByComma = new StringBuilder();
+        if (!Objects.equals(skillsInputStr, "")) {
             // スキルが入力されたたら配列にいれる
-            Collections.addAll(skills, skillsInput.split(","));
-            if (!skills.isEmpty()) {
-                System.out.println("スキルを登録します: ");
-                skillsListByComma = String.join(", ", skills);
-            } else {
-                // カンマのみが入力されたらスキルを登録せず終了
-                System.out.println("スキルを登録しません");
+            Collections.addAll(inputSkills, skillsInputStr.split(","));
+            if (!inputSkills.isEmpty()) {
+                for (String inputSkill : inputSkills) {
+                    String skill = inputSkill.trim();
+                    if (!skill.isEmpty()) {
+                        skills.add(skill);
+                    }
+                }
+                if (!skills.isEmpty()) {
+                    for (int i = 0; i < skills.size(); i++) {
+                        skillsListByComma.append(skills.get(i));
+                        if (i < skills.size() - 1) {
+                            skillsListByComma.append(",");
+                        }
+                    }
+                    System.out.println("スキルを登録しました: " + skillsListByComma);
+                }
             }
-        } else {
-            // 空文字が入力されたらスキルを登録せず終了
+        }
+        if (skills.isEmpty()) {
+            // 空文字、空白またはカンマのみの入力ならスキルを登録しない
             System.out.println("スキルを登録しません");
         }
         System.out.println("エンジニア登録内容を受け取りました。");
@@ -291,31 +303,52 @@ public class Main {
     private static NavigationResult searchEngineersBySkillAndAssignStatus() {
         while(true) {
             List<Engineer> engineers = engineerStore.getEngineers();
-            List<Engineer> filteredEngineersBySkills;
+            List<Engineer> filteredEngineersBySkills = new ArrayList<>();
 
             System.out.println("スキルセット、参画状態を順番にお聞きします。");
             System.out.println("まずはスキルセットについて入力してください。");
             System.out.println("スキルを複数指定したい場合、カンマ区切りで入力してください。");
             System.out.println("スキルを指定しない場合、入力せずEnterを押してください。");
             System.out.println("通常メニュー: M-> メインメニュー / B-> メインメニュー");
-            String skillsInput = scanner.nextLine();
+            String inputSkillsStr = scanner.nextLine();
+            List<String> inputSkills = new ArrayList<>();
             List<String> skills = new ArrayList<>();
-            switch (skillsInput) {
+            switch (inputSkillsStr) {
                 case "M":
                     return NavigationResult.MAIN_MENU;
                 case "B":
                     return NavigationResult.SEARCH_ENGINEER;
                 default:
-                    Collections.addAll(skills, skillsInput.split(","));
-                    if (!skills.isEmpty()) {
-                        String skillsListByComma = String.join(", ", skills);
-                        filteredEngineersBySkills = engineers.stream().filter(engineer -> assignService.isAvailableBySkills(engineer, skills)).toList();
-                        System.out.println("スキルを指定しました: " + skillsListByComma);
-                    } else {
-                        // 入力なし／カンマのみが入力されたらスキルを登録せず終了
-                        filteredEngineersBySkills = engineers;
-                        System.out.println("スキルを指定しません");
+                    Collections.addAll(inputSkills, inputSkillsStr.split(","));
+                    if (!inputSkills.isEmpty()) {
+                        for (String inputSkill : inputSkills) {
+                            String skill = inputSkill.trim();
+                            if (!skill.isEmpty()) {
+                                skills.add(skill);
+                            }
+                        }
+                        if (!skills.isEmpty()) {
+                            StringBuilder skillsListByComma = new StringBuilder();
+                            for (int i = 0; i < skills.size(); i++) {
+                                skillsListByComma.append(skills.get(i));
+                                if (i < skills.size() - 1) {
+                                    skillsListByComma.append(",");
+                                }
+                            }
+                            System.out.println("スキルを指定しました: " + skillsListByComma);
+
+                            for (Engineer engineer: engineers) {
+                                if (assignService.isAvailableBySkills(engineer, skills)) {
+                                    filteredEngineersBySkills.add(engineer);
+                                }
+                            }
+                        }
                     }
+                // 入力なし／カンマのみが入力されたらスキルを登録せず終了
+                if (filteredEngineersBySkills.isEmpty()) {
+                    filteredEngineersBySkills.addAll(engineers);
+                    System.out.println("スキルを指定しません");
+                }
             }
             List<Engineer> filteredEngineersByAssignedStatus;
             System.out.println("参画状態の検索方法を指定してください。");
