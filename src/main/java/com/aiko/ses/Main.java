@@ -388,7 +388,7 @@ public class Main {
             }
             System.out.println();
             System.out.println("検索結果を表示します。");
-            displayEngineerListScreen(filteredEngineersByAssignedStatus);
+            return displayEngineerListScreen(filteredEngineersByAssignedStatus);
         }
     }
     private static NavigationResult displayEngineerDetails(Engineer engineer) {
