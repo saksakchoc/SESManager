@@ -1,6 +1,8 @@
 package com.aiko.ses;
 import com.aiko.ses.model.*;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.*;
 
 public class Main {
@@ -70,13 +72,13 @@ public class Main {
         while(true) {
             switch (nextFeaturePage) {
                 case ENGINEER_LIST:
-                    nextFeaturePage = displayEngineerList();
+                    nextFeaturePage = displayEngineerListScreen(engineerStore.getEngineers());
                     break;
                 case REGISTER_ENGINEER:
                     nextFeaturePage = registerEngineer();
                     break;
                 case SEARCH_ENGINEER:
-                    nextFeaturePage = searchEngineer();
+                    nextFeaturePage = searchEngineerScreen();
                     break;
                 case REGISTER_PROJECT:
                     nextFeaturePage = registerProject();
@@ -141,27 +143,39 @@ public class Main {
         }
         System.out.println("単価が入力されました: " + price + "です");
         // スキル振り分け処理
+        List<String> inputSkills = new ArrayList<>();
         List<String> skills = new ArrayList<>();
         System.out.println("スキルを教えてください(カンマ区切り)");
         System.out.println("スキルを登録しない場合は入力無しでOK");
-        String skillsInput = scanner.nextLine();
-        String skillsListByComma = "";
-        if (Objects.equals(skillsInput, "M") || Objects.equals(skillsInput, "B")) {
+        String skillsInputStr = scanner.nextLine();
+        if (Objects.equals(skillsInputStr, "M") || Objects.equals(skillsInputStr, "B")) {
             System.out.println("メインメニューに戻ります");
             return NavigationResult.MAIN_MENU;
         }
-        if (!Objects.equals(skillsInput, "")) {
+        StringBuilder skillsListByComma = new StringBuilder();
+        if (!Objects.equals(skillsInputStr, "")) {
             // スキルが入力されたたら配列にいれる
-            Collections.addAll(skills, skillsInput.split(","));
-            if (!skills.isEmpty()) {
-                System.out.println("スキルを登録します: ");
-                skillsListByComma = String.join(", ", skills);
-            } else {
-                // カンマのみが入力されたらスキルを登録せず終了
-                System.out.println("スキルを登録しません");
+            Collections.addAll(inputSkills, skillsInputStr.split(","));
+            if (!inputSkills.isEmpty()) {
+                for (String inputSkill : inputSkills) {
+                    String skill = inputSkill.trim();
+                    if (!skill.isEmpty()) {
+                        skills.add(skill);
+                    }
+                }
+                if (!skills.isEmpty()) {
+                    for (int i = 0; i < skills.size(); i++) {
+                        skillsListByComma.append(skills.get(i));
+                        if (i < skills.size() - 1) {
+                            skillsListByComma.append(",");
+                        }
+                    }
+                    System.out.println("スキルを登録しました: " + skillsListByComma);
+                }
             }
-        } else {
-            // 空文字が入力されたらスキルを登録せず終了
+        }
+        if (skills.isEmpty()) {
+            // 空文字、空白またはカンマのみの入力ならスキルを登録しない
             System.out.println("スキルを登録しません");
         }
         System.out.println("エンジニア登録内容を受け取りました。");
@@ -180,24 +194,53 @@ public class Main {
             return NavigationResult.REGISTER_ENGINEER;
         }
     }
-    private static NavigationResult searchEngineer() {
+    private static NavigationResult searchEngineerScreen() {
+        final NavigationResult thisScreenNavigationCode = NavigationResult.SEARCH_ENGINEER;
         System.out.println("======== エンジニア検索画面 ========");
         while(true) {
-            System.out.println("M-> メインメニュー / B-> メインメニュー");
+            NavigationResult navigationResult;
+            System.out.println("検索方法を指定してください。");
+            System.out.println("1-> 特殊検索条件指定 / 2-> ID検索 / 3-> 全件表示");
+            System.out.println("通常メニュー: M-> メインメニュー / B-> メインメニュー");
             String input = scanner.nextLine();
             switch (input) {
+                case "1":
+                    navigationResult = searchEngineersBySkillAndAssignStatus();
+                    break;
+                case "2":
+                    navigationResult = searchEngineerByIdScreen();
+                    break;
+                case "3":
+                    navigationResult = displayEngineerListScreen(engineerStore.getEngineers());
+                    break;
                 case "M":
                 case "B":
                     // MかBが入力されたらメインメニューに戻る
                     return NavigationResult.MAIN_MENU;
                 default:
+                    continue;
+            }
+            if (navigationResult != thisScreenNavigationCode) {
+                return navigationResult;
             }
         }
     }
-    private static NavigationResult displayEngineerList() {
+
+    private static NavigationResult displayEngineerListScreen(List<Engineer> engineers) {
+        final NavigationResult thisScreenNavigationCode = NavigationResult.ENGINEER_LIST;
+
         System.out.println("======== エンジニア一覧画面 ========");
+        int engineerListSize = engineers.size();
+
+        if (engineerListSize == 0) {
+            System.out.println("該当するエンジニアが見つかりません");
+            return NavigationResult.SEARCH_ENGINEER;
+        }
+
         while(true) {
+            System.out.println("閲覧したいエンジニアの行番号を選択してください。");
             System.out.println("M-> メインメニュー / B-> エンジニア検索画面");
+            printEngineerList(engineers);
             String input = scanner.nextLine();
             switch (input) {
                 case "M":
@@ -206,7 +249,184 @@ public class Main {
                     // MかBが入力されたらメインメニューに戻る
                     return NavigationResult.SEARCH_ENGINEER;
                 default:
+                    try {
+                        int rowNumber = Integer.parseInt(input);
+                        if (rowNumber <= 0 || rowNumber > engineerListSize) {
+                            throw new IllegalArgumentException("入力された数値の範囲が、エンジニアの人数より多い、または0以下です");
+                        }
+                        Engineer selectedEngineer = engineers.get(rowNumber - 1);
+                        NavigationResult navigationResult = displayEngineerDetails(selectedEngineer);
+                        if (navigationResult != thisScreenNavigationCode) {
+                            return navigationResult;
+                        }
+                    } catch (IllegalArgumentException e) {
+                        System.out.println("行番号(1～" + engineerListSize + "の整数、またはM/Bを入力してください");
+                    }
             }
+        }
+    }
+    private static void printEngineerList(List<Engineer> engineers) {
+        for (int i=0; i<engineers.size(); i++) {
+            Engineer engineer = engineers.get(i);
+            System.out.print(i+1 + " : ");
+            System.out.print(engineer.getName());
+            System.out.println();
+        }
+    }
+    private static NavigationResult searchEngineerByIdScreen() {
+        while(true) {
+            System.out.println("エンジニアIDを入力してください。");
+            String input = scanner.nextLine();
+            switch(input) {
+                case "M":
+                    return NavigationResult.MAIN_MENU;
+                case "B":
+                    return NavigationResult.SEARCH_ENGINEER;
+                default:
+                    try {
+                        int engineerId = Integer.parseInt(input);
+                        Engineer engineer = engineerStore.getEngineer(engineerId);
+                        if (engineer == null) {
+                            throw new IllegalArgumentException("入力されたIDに該当するエンジニアがいません。");
+                        }
+                        return displayEngineerDetails(engineer);
+                    } catch (NumberFormatException e) {
+                        // 整数に変換できない場合はループに戻る
+                        System.out.println("入力できる範囲の整数を入力してください。");
+                    } catch (IllegalArgumentException e) {
+                        System.out.println("入力されたIDに該当するエンジニアがいません。");
+                    }
+
+            }
+        }
+    }
+    private static NavigationResult searchEngineersBySkillAndAssignStatus() {
+        while(true) {
+            List<Engineer> engineers = engineerStore.getEngineers();
+            List<Engineer> filteredEngineersBySkills = new ArrayList<>();
+
+            System.out.println("スキルセット、参画状態を順番にお聞きします。");
+            System.out.println("まずはスキルセットについて入力してください。");
+            System.out.println("スキルを複数指定したい場合、カンマ区切りで入力してください。");
+            System.out.println("スキルを指定しない場合、入力せずEnterを押してください。");
+            System.out.println("通常メニュー: M-> メインメニュー / B-> メインメニュー");
+            String inputSkillsStr = scanner.nextLine();
+            List<String> inputSkills = new ArrayList<>();
+            List<String> skills = new ArrayList<>();
+            switch (inputSkillsStr) {
+                case "M":
+                    return NavigationResult.MAIN_MENU;
+                case "B":
+                    return NavigationResult.SEARCH_ENGINEER;
+                default:
+                    Collections.addAll(inputSkills, inputSkillsStr.split(","));
+                    if (!inputSkills.isEmpty()) {
+                        for (String inputSkill : inputSkills) {
+                            String skill = inputSkill.trim();
+                            if (!skill.isEmpty()) {
+                                skills.add(skill);
+                            }
+                        }
+                        if (!skills.isEmpty()) {
+                            StringBuilder skillsListByComma = new StringBuilder();
+                            for (int i = 0; i < skills.size(); i++) {
+                                skillsListByComma.append(skills.get(i));
+                                if (i < skills.size() - 1) {
+                                    skillsListByComma.append(",");
+                                }
+                            }
+                            System.out.println("スキルを指定しました: " + skillsListByComma);
+
+
+                            for (Engineer engineer: engineers) {
+                                if (assignService.isAvailableBySkills(engineer, skills)) {
+                                    filteredEngineersBySkills.add(engineer);
+                                }
+                            }
+                        } else {
+                            System.out.println("スキルを指定しません");
+                        }
+                    }
+                // 入力なし／カンマのみが入力されたらスキルを登録せず終了
+                if (skills.isEmpty()) {
+                    filteredEngineersBySkills.addAll(engineers);
+                }
+            }
+            List<Engineer> filteredEngineersByAssignedStatus;
+            System.out.println("参画状態の検索方法を指定してください。");
+            System.out.println("1：現在未参画 / 2: 日付指定未参画 / 3: 参画状態不問");
+            System.out.println("通常メニュー: M-> メインメニュー / B-> メインメニュー");
+            String assignedStatusInput = scanner.nextLine();
+            switch (assignedStatusInput) {
+                case "M":
+                    return NavigationResult.MAIN_MENU;
+                case "B":
+                    return NavigationResult.SEARCH_ENGINEER;
+                case "1":
+                    /* 本日日付に参画情報があるエンジニアを除く */
+                    filteredEngineersByAssignedStatus = filteredEngineersBySkills.stream().filter(engineer -> !assignService.isAssignedForDate(engineer, LocalDate.now())).toList();
+                    break;
+                case "2":
+                    /* 対象期間に参画情報があるエンジニアを除く */
+                    LocalDate startDate;
+                    while(true) {
+                        System.out.println("対象期間開始日を入力してください。(形式: yyyy-mm-dd)");
+                        String startDateInput = scanner.nextLine();
+                        switch(startDateInput) {
+                            case "M":
+                                return NavigationResult.MAIN_MENU;
+                            case "B":
+                                return NavigationResult.SEARCH_ENGINEER;
+                            default:
+                                try {
+                                    startDate = LocalDate.parse(startDateInput);
+                                    break;
+                                } catch (DateTimeParseException e) {
+                                    System.out.println("日付を yyyy-MM-dd 形式で入力してください。");
+                                    continue;
+                                }
+                        }
+                        break;
+                    }
+                    LocalDate endDate;
+                    while(true) {
+                        System.out.println("対象期間終了日を入力してください。(形式: yyyy-MM-dd)");
+                        String endDateInput = scanner.nextLine();
+                        switch(endDateInput) {
+                            case "M":
+                                return NavigationResult.MAIN_MENU;
+                            case "B":
+                                return NavigationResult.SEARCH_ENGINEER;
+                            default:
+                                try {
+                                    endDate = LocalDate.parse(endDateInput);
+                                    if (startDate.isAfter(endDate)) {
+                                        throw new IllegalArgumentException("startDate>EndDateとなっています");
+                                    }
+                                    LocalDate finalStartDate = startDate;
+                                    LocalDate finalEndDate = endDate;
+                                    filteredEngineersByAssignedStatus = filteredEngineersBySkills.stream().filter(engineer -> assignService.isAvailableByPeriod(engineer, finalStartDate, finalEndDate)).toList();
+                                    break;
+                                } catch (DateTimeParseException e) {
+                                    System.out.println("日付を yyyy-MM-dd 形式で入力してください。");
+                                    continue;
+                                } catch (IllegalArgumentException e) {
+                                    System.out.println("期間開始日 < 期間終了日となるように入力してください。");
+                                    continue;
+                                }
+                        }
+                        break;
+                    }
+                    break;
+                case "3":
+                    filteredEngineersByAssignedStatus = filteredEngineersBySkills;
+                    break;
+                default:
+                    continue;
+            }
+            System.out.println();
+            System.out.println("検索結果を表示します。");
+            return displayEngineerListScreen(filteredEngineersByAssignedStatus);
         }
     }
     private static NavigationResult displayEngineerDetails(Engineer engineer) {
@@ -223,6 +443,7 @@ public class Main {
         System.out.println("========================");
         System.out.println("　　　　エンジニア情報");
         System.out.println("========================");
+        System.out.println("エンジニアID: " + engineer.getId());
         System.out.println("エンジニア名: " + engineer.getName());
         System.out.println("単価　　　　: " + engineer.getPrice());
         System.out.println("スキル　　　: " + skillsListByComma);
@@ -237,7 +458,9 @@ public class Main {
             System.out.println("参画中の案件がありません");
         }
         participations.forEach(participation -> {
-            System.out.println("【 案件名: " + participation.getProject().getName() + " 】");
+            Project project = participation.getProject();
+            System.out.println("【 案件名: " + project.getName() + " 】");
+            System.out.println("　　案件ID: " + project.getId());
             System.out.println("　　契約単価: " + participation.getContractPrice());
             System.out.println("　　開始日　: " + participation.getStartDate());
             System.out.println("　　終了日　: " + participation.getEndDate());
@@ -265,7 +488,7 @@ public class Main {
     private static NavigationResult registerProject() {
         System.out.println("======== 案件登録画面 ========");
         while(true) {
-            System.out.println("M-> メインメニュー / B-> メインメニュー");
+            System.out.println("通常メニュー: M-> メインメニュー / B-> メインメニュー");
             String input = scanner.nextLine();
             switch (input) {
                 case "M":
@@ -279,7 +502,7 @@ public class Main {
     private static NavigationResult searchProject() {
         System.out.println("======== 案件検索画面 ========");
         while(true) {
-            System.out.println("M-> メインメニュー / B-> メインメニュー");
+            System.out.println("通常メニュー: M-> メインメニュー / B-> メインメニュー");
             String input = scanner.nextLine();
             switch (input) {
                 case "M":

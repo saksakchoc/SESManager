@@ -13,6 +13,15 @@ public class AssignService {
                 .filter(p -> p.getEngineer() == e)
                 .toList();
     }
+    public boolean isAssignedForDate(Engineer e, LocalDate targetDate) {
+        /* エンジニアが全期間で参画されている案件一覧を取得する */
+        List<Participation> participationList = this.getEngineerParticipation(e);
+        /* 参画されている案件のうち、対象日付と参画期間が重複する要素を取得し、存在すればtrueを返す */
+        return !participationList.stream()
+                .filter(p -> (!targetDate.isBefore(p.getStartDate()) && !targetDate.isAfter(p.getEndDate())))
+                .toList()
+                .isEmpty();
+    }
     public boolean isAvailableByPeriod(Engineer e, LocalDate startDate, LocalDate endDate) {
         /* 開始日 <= 終了日でなければエラー */
         if (endDate.isBefore(startDate)) {
