@@ -18,7 +18,7 @@ public class AssignService {
         List<Participation> participationList = this.getEngineerParticipation(e);
         /* 参画されている案件のうち、対象日付と参画期間が重複する要素を取得し、存在すればtrueを返す */
         return !participationList.stream()
-                .filter(p -> (!targetDate.isBefore(p.getStartDate()) || !targetDate.isAfter(p.getEndDate())))
+                .filter(p -> (!targetDate.isBefore(p.getStartDate()) && !targetDate.isAfter(p.getEndDate())))
                 .toList()
                 .isEmpty();
     }
