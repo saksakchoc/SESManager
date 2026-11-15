@@ -337,6 +337,8 @@ public class Main {
                             }
                             System.out.println("スキルを指定しました: " + skillsListByComma);
 
+                        System.out.println("スキルを指定しません");
+
                             for (Engineer engineer: engineers) {
                                 if (assignService.isAvailableBySkills(engineer, skills)) {
                                     filteredEngineersBySkills.add(engineer);
@@ -345,9 +347,8 @@ public class Main {
                         }
                     }
                 // 入力なし／カンマのみが入力されたらスキルを登録せず終了
-                if (filteredEngineersBySkills.isEmpty()) {
+                if (skills.isEmpty()) {
                     filteredEngineersBySkills.addAll(engineers);
-                    System.out.println("スキルを指定しません");
                 }
             }
             List<Engineer> filteredEngineersByAssignedStatus;
