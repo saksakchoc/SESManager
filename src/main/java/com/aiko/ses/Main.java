@@ -398,6 +398,9 @@ public class Main {
                             default:
                                 try {
                                     endDate = LocalDate.parse(endDateInput);
+                                    if (startDate.isAfter(endDate)) {
+                                        throw new IllegalArgumentException("startDate>EndDateとなっています");
+                                    }
                                     LocalDate finalStartDate = startDate;
                                     LocalDate finalEndDate = endDate;
                                     filteredEngineersByAssignedStatus = filteredEngineersBySkills.stream().filter(engineer -> assignService.isAvailableByPeriod(engineer, finalStartDate, finalEndDate)).toList();
