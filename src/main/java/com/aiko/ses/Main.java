@@ -310,11 +310,11 @@ public class Main {
                     if (!skills.isEmpty()) {
                         String skillsListByComma = String.join(", ", skills);
                         filteredEngineersBySkills = engineers.stream().filter(engineer -> assignService.isAvailableBySkills(engineer, skills)).toList();
-                        System.out.println("スキルを登録します: " + skillsListByComma);
+                        System.out.println("スキルを指定しました: " + skillsListByComma);
                     } else {
                         // 入力なし／カンマのみが入力されたらスキルを登録せず終了
                         filteredEngineersBySkills = engineers;
-                        System.out.println("スキルを登録しません");
+                        System.out.println("スキルを指定しません");
                     }
             }
             List<Engineer> filteredEngineersByAssignedStatus;
