@@ -3,7 +3,6 @@ package com.aiko.ses.model;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -58,6 +57,97 @@ public class AssignServiceTest {
         AssignService as = new AssignService(participationStore);
 
         assertEquals(0, as.getEngineerParticipation(e1).size());
+    }
+
+    @Test
+    void isAssignedForDate_対象日付が参画開始日前日() {
+        EngineerStore es = new EngineerStore();
+        Engineer e = es.createEngineer("あいこ1", 45, "Java");
+        ProjectStore pjs = new ProjectStore();
+        Project project1 = pjs.createProject("A社基幹システム改修", 40, 60, LocalDate.parse("2026-04-01"), LocalDate.parse("2027-03-31"));
+
+        ParticipationStore pps = new ParticipationStore();
+        pps.createParticipation(e, project1, LocalDate.parse("2026-04-01"), LocalDate.parse("2027-03-31"), 45);
+
+        AssignService as = new AssignService(pps);
+        assertFalse(as.isAssignedForDate(e, LocalDate.parse("2026-03-31")));
+
+    }
+
+    @Test
+    void isAssignedForDate_対象日付が参画開始日() {
+        EngineerStore es = new EngineerStore();
+        Engineer e = es.createEngineer("あいこ1", 45, "Java");
+        ProjectStore pjs = new ProjectStore();
+        Project project1 = pjs.createProject("A社基幹システム改修", 40, 60, LocalDate.parse("2026-04-01"), LocalDate.parse("2027-03-31"));
+
+        ParticipationStore pps = new ParticipationStore();
+        pps.createParticipation(e, project1, LocalDate.parse("2026-04-01"), LocalDate.parse("2027-03-31"), 45);
+
+        AssignService as = new AssignService(pps);
+        assertTrue(as.isAssignedForDate(e, LocalDate.parse("2026-04-01")));
+
+    }
+
+    @Test
+    void isAssignedForDate_対象日付が参画終了日() {
+        EngineerStore es = new EngineerStore();
+        Engineer e = es.createEngineer("あいこ1", 45, "Java");
+        ProjectStore pjs = new ProjectStore();
+        Project project1 = pjs.createProject("A社基幹システム改修", 40, 60, LocalDate.parse("2026-04-01"), LocalDate.parse("2027-03-31"));
+
+        ParticipationStore pps = new ParticipationStore();
+        pps.createParticipation(e, project1, LocalDate.parse("2026-04-01"), LocalDate.parse("2027-03-31"), 45);
+
+        AssignService as = new AssignService(pps);
+        assertTrue(as.isAssignedForDate(e, LocalDate.parse("2027-03-31")));
+
+    }
+    @Test
+    void isAssignedForDate_対象日付が参画終了日翌日() {
+        EngineerStore es = new EngineerStore();
+        Engineer e = es.createEngineer("あいこ1", 45, "Java");
+        ProjectStore pjs = new ProjectStore();
+        Project project1 = pjs.createProject("A社基幹システム改修", 40, 60, LocalDate.parse("2026-04-01"), LocalDate.parse("2027-03-31"));
+
+        ParticipationStore pps = new ParticipationStore();
+        pps.createParticipation(e, project1, LocalDate.parse("2026-04-01"), LocalDate.parse("2027-03-31"), 45);
+
+        AssignService as = new AssignService(pps);
+        assertFalse(as.isAssignedForDate(e, LocalDate.parse("2027-04-01")));
+
+    }
+    @Test
+    void isAssignedForDate_案件2件のうち2件目に参画中() {
+        EngineerStore es = new EngineerStore();
+        Engineer e = es.createEngineer("あいこ1", 45, "Java");
+        ProjectStore pjs = new ProjectStore();
+        Project project1 = pjs.createProject("A社基幹システム改修", 40, 60, LocalDate.parse("2026-04-01"), LocalDate.parse("2027-03-31"));
+        Project project2 = pjs.createProject("B社基幹システム改修", 40, 60, LocalDate.parse("2027-04-01"), LocalDate.parse("2028-03-31"));
+
+        ParticipationStore pps = new ParticipationStore();
+        pps.createParticipation(e, project1, LocalDate.parse("2026-04-01"), LocalDate.parse("2027-03-31"), 45);
+        pps.createParticipation(e, project2, LocalDate.parse("2027-04-01"), LocalDate.parse("2028-03-31"), 50);
+
+        AssignService as = new AssignService(pps);
+        assertTrue(as.isAssignedForDate(e, LocalDate.parse("2027-04-01")));
+
+    }
+    @Test
+    void isAssignedForDate_案件2件あり対象日は参画なし() {
+        EngineerStore es = new EngineerStore();
+        Engineer e = es.createEngineer("あいこ1", 45, "Java");
+        ProjectStore pjs = new ProjectStore();
+        Project project1 = pjs.createProject("A社基幹システム改修", 40, 60, LocalDate.parse("2026-04-01"), LocalDate.parse("2027-03-31"));
+        Project project2 = pjs.createProject("B社基幹システム改修", 40, 60, LocalDate.parse("2027-04-01"), LocalDate.parse("2028-03-31"));
+
+        ParticipationStore pps = new ParticipationStore();
+        pps.createParticipation(e, project1, LocalDate.parse("2026-04-01"), LocalDate.parse("2027-03-31"), 45);
+        pps.createParticipation(e, project2, LocalDate.parse("2027-04-01"), LocalDate.parse("2028-03-31"), 50);
+
+        AssignService as = new AssignService(pps);
+        assertFalse(as.isAssignedForDate(e, LocalDate.parse("2028-04-01")));
+
     }
     @Test
     void isAvailableByPeriod_対象期間が一日() {
@@ -189,14 +279,13 @@ public class AssignServiceTest {
     void isAvailableByPeriod_対象期間不正_開始日が終了日より後() {
         EngineerStore es = new EngineerStore();
         Engineer e = es.createEngineer("あいこ1", 45, "Java");
-        ProjectStore pjs = new ProjectStore();
 
         ParticipationStore participationStore = new ParticipationStore();
 
         AssignService as = new AssignService(participationStore);
-        assertThrows(IllegalArgumentException.class, () -> {
-            as.isAvailableByPeriod(e, LocalDate.parse("2026-04-01"),LocalDate.parse("2025-04-01"));
-        });
+        assertThrows(IllegalArgumentException.class, () ->
+            as.isAvailableByPeriod(e, LocalDate.parse("2026-04-01"),LocalDate.parse("2025-04-01"))
+        );
     }
     @Test
     void isAvailableByPrice_単価上下限以内() {
