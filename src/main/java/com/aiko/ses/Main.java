@@ -291,7 +291,12 @@ public class Main {
                         if (engineer == null) {
                             throw new IllegalArgumentException("入力されたIDに該当するエンジニアがいません。");
                         }
-                        return displayEngineerDetails(engineer);
+                        NavigationResult navigationResult =  displayEngineerDetails(engineer);
+                        if (navigationResult == NavigationResult.MAIN_MENU) {
+                            return navigationResult;
+                        }
+                        break;
+
                     } catch (NumberFormatException e) {
                         // 整数に変換できない場合はループに戻る
                         System.out.println("入力できる範囲の整数を入力してください。");
