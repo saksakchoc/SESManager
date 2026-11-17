@@ -189,7 +189,7 @@ public class Main {
             // skillsはStringに変換して渡す
             Engineer engineer = engineerStore.createEngineer(engineerName, price, skills.toArray(new String[0]));
             System.out.println("エンジニアを登録しました。エンジニア詳細画面に移動します");
-            return displayEngineerDetails(engineer, NavigationResult.REGISTER_ENGINEER);
+            return displayEngineerDetails(engineer, NavigationResult.ENGINEER_LIST);
         } else {
             return NavigationResult.REGISTER_ENGINEER;
         }
