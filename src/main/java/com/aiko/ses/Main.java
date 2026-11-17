@@ -481,7 +481,7 @@ public class Main {
             // 使い方を表示
             System.out.println();
             System.out.println("***************************");
-            System.out.println("M: メインメニュー / B: エンジニア一覧画面");
+            System.out.println("M: メインメニュー / B: 呼び出し元(エンジニア一覧画面,ID検索画面)");
             System.out.println("***************************");
             System.out.println();
 
