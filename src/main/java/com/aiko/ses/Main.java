@@ -189,13 +189,12 @@ public class Main {
             // skillsはStringに変換して渡す
             Engineer engineer = engineerStore.createEngineer(engineerName, price, skills.toArray(new String[0]));
             System.out.println("エンジニアを登録しました。エンジニア詳細画面に移動します");
-            return displayEngineerDetails(engineer);
+            return displayEngineerDetails(engineer, NavigationResult.REGISTER_ENGINEER);
         } else {
             return NavigationResult.REGISTER_ENGINEER;
         }
     }
     private static NavigationResult searchEngineerScreen() {
-        final NavigationResult thisScreenNavigationCode = NavigationResult.SEARCH_ENGINEER;
         System.out.println("======== エンジニア検索画面 ========");
         while(true) {
             NavigationResult navigationResult;
@@ -221,15 +220,13 @@ public class Main {
                     System.out.println("1 / 2 / 3 のいずれかを入力してください。");
                     continue;
             }
-            if (navigationResult != thisScreenNavigationCode) {
+            if (navigationResult != NavigationResult.SEARCH_ENGINEER) {
                 return navigationResult;
             }
         }
     }
 
     private static NavigationResult displayEngineerListScreen(List<Engineer> engineers) {
-        final NavigationResult thisScreenNavigationCode = NavigationResult.ENGINEER_LIST;
-
         System.out.println("======== エンジニア一覧画面 ========");
         int engineerListSize = engineers.size();
 
@@ -256,8 +253,8 @@ public class Main {
                             throw new IllegalArgumentException("入力された数値の範囲が、エンジニアの人数より多い、または0以下です");
                         }
                         Engineer selectedEngineer = engineers.get(rowNumber - 1);
-                        NavigationResult navigationResult = displayEngineerDetails(selectedEngineer);
-                        if (navigationResult != thisScreenNavigationCode) {
+                        NavigationResult navigationResult = displayEngineerDetails(selectedEngineer, NavigationResult.ENGINEER_LIST);
+                        if (navigationResult != NavigationResult.ENGINEER_LIST) {
                             return navigationResult;
                         }
                     } catch (IllegalArgumentException e) {
@@ -291,7 +288,7 @@ public class Main {
                         if (engineer == null) {
                             throw new IllegalArgumentException("入力されたIDに該当するエンジニアがいません。");
                         }
-                        NavigationResult navigationResult =  displayEngineerDetails(engineer);
+                        NavigationResult navigationResult =  displayEngineerDetails(engineer, NavigationResult.SEARCH_ENGINEER);
                         if (navigationResult == NavigationResult.MAIN_MENU) {
                             return navigationResult;
                         }
@@ -439,7 +436,7 @@ public class Main {
             return displayEngineerListScreen(filteredEngineersByAssignedStatus);
         }
     }
-    private static NavigationResult displayEngineerDetails(Engineer engineer) {
+    private static NavigationResult displayEngineerDetails(Engineer engineer, NavigationResult backDestinationNavigation) {
         System.out.println("========================");
         System.out.println();
         System.out.println("=    エンジニア詳細画面　  =");
@@ -476,12 +473,19 @@ public class Main {
             System.out.println("　　終了日　: " + participation.getEndDate());
             System.out.println();
         });
+        String backDestinationNavigationStr;
+        switch (backDestinationNavigation){
+            case ENGINEER_LIST -> backDestinationNavigationStr = "(エンジニア一覧画面)";
+            case SEARCH_ENGINEER -> backDestinationNavigationStr = "(ID検索画面)";
+            case REGISTER_ENGINEER -> backDestinationNavigationStr = "(エンジニア登録画面)";
+            default -> backDestinationNavigationStr = "";
+        }
         // 入力を受け付ける
         while (true) {
             // 使い方を表示
             System.out.println();
             System.out.println("***************************");
-            System.out.println("M: メインメニュー / B: 呼び出し元(エンジニア一覧画面,ID検索画面)");
+            System.out.println("M: メインメニュー / B: 呼び出し元" + backDestinationNavigationStr);
             System.out.println("***************************");
             System.out.println();
 
@@ -490,7 +494,7 @@ public class Main {
                 case "M":
                     return NavigationResult.MAIN_MENU;
                 case "B":
-                    return NavigationResult.ENGINEER_LIST;
+                    return backDestinationNavigation;
                 default:
             }
         }
