@@ -276,6 +276,7 @@ public class Main {
     private static NavigationResult searchEngineerByIdScreen() {
         while(true) {
             System.out.println("エンジニアIDを入力してください。");
+            System.out.println("通常メニュー: M-> メインメニュー / B-> エンジニア検索画面");
             String input = scanner.nextLine();
             switch(input) {
                 case "M":
@@ -301,62 +302,63 @@ public class Main {
         }
     }
     private static NavigationResult searchEngineersBySkillAndAssignStatus() {
-        while(true) {
-            List<Engineer> engineers = engineerStore.getEngineers();
-            List<Engineer> filteredEngineersBySkills = new ArrayList<>();
+        List<Engineer> engineers = engineerStore.getEngineers();
+        List<Engineer> filteredEngineersBySkills = new ArrayList<>();
 
-            System.out.println("スキルセット、参画状態を順番にお聞きします。");
-            System.out.println("まずはスキルセットについて入力してください。");
-            System.out.println("スキルを複数指定したい場合、カンマ区切りで入力してください。");
-            System.out.println("スキルを指定しない場合、入力せずEnterを押してください。");
-            System.out.println("通常メニュー: M-> メインメニュー / B-> エンジニア検索画面");
-            String inputSkillsStr = scanner.nextLine();
-            List<String> inputSkills = new ArrayList<>();
-            List<String> skills = new ArrayList<>();
-            switch (inputSkillsStr) {
-                case "M":
-                    return NavigationResult.MAIN_MENU;
-                case "B":
-                    return NavigationResult.SEARCH_ENGINEER;
-                default:
-                    Collections.addAll(inputSkills, inputSkillsStr.split(","));
-                    if (!inputSkills.isEmpty()) {
-                        for (String inputSkill : inputSkills) {
-                            String skill = inputSkill.trim();
-                            if (!skill.isEmpty()) {
-                                skills.add(skill);
-                            }
-                        }
-                        if (!skills.isEmpty()) {
-                            StringBuilder skillsListByComma = new StringBuilder();
-                            for (int i = 0; i < skills.size(); i++) {
-                                skillsListByComma.append(skills.get(i));
-                                if (i < skills.size() - 1) {
-                                    skillsListByComma.append(",");
-                                }
-                            }
-                            System.out.println("スキルを指定しました: " + skillsListByComma);
-
-
-                            for (Engineer engineer: engineers) {
-                                if (assignService.isAvailableBySkills(engineer, skills)) {
-                                    filteredEngineersBySkills.add(engineer);
-                                }
-                            }
-                        } else {
-                            System.out.println("スキルを指定しません");
+        System.out.println("スキルセット、参画状態を順番にお聞きします。");
+        System.out.println("まずはスキルセットについて入力してください。");
+        System.out.println("スキルを複数指定したい場合、カンマ区切りで入力してください。");
+        System.out.println("スキルを指定しない場合、入力せずEnterを押してください。");
+        System.out.println("通常メニュー: M-> メインメニュー / B-> エンジニア検索画面");
+        String inputSkillsStr = scanner.nextLine();
+        List<String> inputSkills = new ArrayList<>();
+        List<String> skills = new ArrayList<>();
+        switch (inputSkillsStr) {
+            case "M":
+                return NavigationResult.MAIN_MENU;
+            case "B":
+                return NavigationResult.SEARCH_ENGINEER;
+            default:
+                Collections.addAll(inputSkills, inputSkillsStr.split(","));
+                if (!inputSkills.isEmpty()) {
+                    for (String inputSkill : inputSkills) {
+                        String skill = inputSkill.trim();
+                        if (!skill.isEmpty()) {
+                            skills.add(skill);
                         }
                     }
-                // 入力なし／カンマのみが入力されたらスキルを登録せず終了
-                if (skills.isEmpty()) {
-                    filteredEngineersBySkills.addAll(engineers);
+                    if (!skills.isEmpty()) {
+                        StringBuilder skillsListByComma = new StringBuilder();
+                        for (int i = 0; i < skills.size(); i++) {
+                            skillsListByComma.append(skills.get(i));
+                            if (i < skills.size() - 1) {
+                                skillsListByComma.append(",");
+                            }
+                        }
+                        System.out.println("スキルを指定しました: " + skillsListByComma);
+
+
+                        for (Engineer engineer: engineers) {
+                            if (assignService.isAvailableBySkills(engineer, skills)) {
+                                filteredEngineersBySkills.add(engineer);
+                            }
+                        }
+                    } else {
+                        System.out.println("スキルを指定しません");
+                    }
                 }
+            // 入力なし／カンマのみが入力されたらスキルを登録せず終了
+            if (skills.isEmpty()) {
+                filteredEngineersBySkills.addAll(engineers);
             }
-            List<Engineer> filteredEngineersByAssignedStatus;
-            System.out.println("参画状態の検索方法を指定してください。");
-            System.out.println("1：現在未参画 / 2: 日付指定未参画 / 3: 参画状態不問");
-            System.out.println("通常メニュー: M-> メインメニュー / B-> エンジニア検索画面");
-            String assignedStatusInput = scanner.nextLine();
+        }
+        List<Engineer> filteredEngineersByAssignedStatus;
+        System.out.println("参画状態の検索方法を指定してください。");
+        System.out.println("1：現在未参画 / 2: 日付指定未参画 / 3: 参画状態不問");
+        System.out.println("通常メニュー: M-> メインメニュー / B-> エンジニア検索画面");
+        String assignedStatusInput = scanner.nextLine();
+        while (true) {
+
             switch (assignedStatusInput) {
                 case "M":
                     return NavigationResult.MAIN_MENU;
@@ -369,10 +371,11 @@ public class Main {
                 case "2":
                     /* 対象期間に参画情報があるエンジニアを除く */
                     LocalDate startDate;
-                    while(true) {
+                    while (true) {
                         System.out.println("対象期間開始日を入力してください。(形式: yyyy-mm-dd)");
+                        System.out.println("通常メニュー: M-> メインメニュー / B-> エンジニア検索画面");
                         String startDateInput = scanner.nextLine();
-                        switch(startDateInput) {
+                        switch (startDateInput) {
                             case "M":
                                 return NavigationResult.MAIN_MENU;
                             case "B":
@@ -389,10 +392,11 @@ public class Main {
                         break;
                     }
                     LocalDate endDate;
-                    while(true) {
+                    while (true) {
                         System.out.println("対象期間終了日を入力してください。(形式: yyyy-MM-dd)");
+                        System.out.println("通常メニュー: M-> メインメニュー / B-> エンジニア検索画面");
                         String endDateInput = scanner.nextLine();
-                        switch(endDateInput) {
+                        switch (endDateInput) {
                             case "M":
                                 return NavigationResult.MAIN_MENU;
                             case "B":
