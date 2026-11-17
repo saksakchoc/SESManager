@@ -309,7 +309,7 @@ public class Main {
             System.out.println("まずはスキルセットについて入力してください。");
             System.out.println("スキルを複数指定したい場合、カンマ区切りで入力してください。");
             System.out.println("スキルを指定しない場合、入力せずEnterを押してください。");
-            System.out.println("通常メニュー: M-> メインメニュー / B-> メインメニュー");
+            System.out.println("通常メニュー: M-> メインメニュー / B-> エンジニア検索画面");
             String inputSkillsStr = scanner.nextLine();
             List<String> inputSkills = new ArrayList<>();
             List<String> skills = new ArrayList<>();
@@ -355,7 +355,7 @@ public class Main {
             List<Engineer> filteredEngineersByAssignedStatus;
             System.out.println("参画状態の検索方法を指定してください。");
             System.out.println("1：現在未参画 / 2: 日付指定未参画 / 3: 参画状態不問");
-            System.out.println("通常メニュー: M-> メインメニュー / B-> メインメニュー");
+            System.out.println("通常メニュー: M-> メインメニュー / B-> エンジニア検索画面");
             String assignedStatusInput = scanner.nextLine();
             switch (assignedStatusInput) {
                 case "M":
