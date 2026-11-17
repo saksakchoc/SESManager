@@ -218,6 +218,7 @@ public class Main {
                     // MかBが入力されたらメインメニューに戻る
                     return NavigationResult.MAIN_MENU;
                 default:
+                    System.out.println("1 / 2 / 3 のいずれかを入力してください。");
                     continue;
             }
             if (navigationResult != thisScreenNavigationCode) {
@@ -356,9 +357,8 @@ public class Main {
         System.out.println("参画状態の検索方法を指定してください。");
         System.out.println("1：現在未参画 / 2: 日付指定未参画 / 3: 参画状態不問");
         System.out.println("通常メニュー: M-> メインメニュー / B-> エンジニア検索画面");
-        String assignedStatusInput = scanner.nextLine();
         while (true) {
-
+            String assignedStatusInput = scanner.nextLine();
             switch (assignedStatusInput) {
                 case "M":
                     return NavigationResult.MAIN_MENU;
@@ -426,6 +426,7 @@ public class Main {
                     filteredEngineersByAssignedStatus = filteredEngineersBySkills;
                     break;
                 default:
+                    System.out.println("1 / 2 / 3 のいずれかを入力してください。");
                     continue;
             }
             System.out.println();
