@@ -228,13 +228,13 @@ public class Main {
 
     private static NavigationResult displayEngineerListScreen(List<Engineer> engineers) {
         System.out.println("======== エンジニア一覧画面 ========");
-        int engineerListSize = engineers.size();
+        final int engineerListSize = engineers.size();
 
         if (engineerListSize == 0) {
             System.out.println("該当するエンジニアが見つかりません");
             return NavigationResult.SEARCH_ENGINEER;
         }
-
+        System.out.println(engineerListSize + "件見つかりました。");
         while(true) {
             System.out.println("閲覧したいエンジニアの行番号を選択してください。");
             System.out.println("M-> メインメニュー / B-> エンジニア検索画面");
