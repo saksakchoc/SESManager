@@ -475,17 +475,17 @@ public class Main {
         });
         String backDestinationNavigationStr;
         switch (backDestinationNavigation){
-            case ENGINEER_LIST -> backDestinationNavigationStr = "(エンジニア一覧画面)";
-            case SEARCH_ENGINEER -> backDestinationNavigationStr = "(ID検索画面)";
-            case REGISTER_ENGINEER -> backDestinationNavigationStr = "(エンジニア登録画面)";
-            default -> backDestinationNavigationStr = "";
+            case ENGINEER_LIST -> backDestinationNavigationStr = "エンジニア一覧画面";
+            case SEARCH_ENGINEER -> backDestinationNavigationStr = "ID検索画面";
+            case REGISTER_ENGINEER -> backDestinationNavigationStr = "エンジニア登録画面";
+            default -> backDestinationNavigationStr = "呼び出し元画面";
         }
         // 入力を受け付ける
         while (true) {
             // 使い方を表示
             System.out.println();
             System.out.println("***************************");
-            System.out.println("M: メインメニュー / B: 呼び出し元" + backDestinationNavigationStr);
+            System.out.println("M: メインメニュー / B: " + backDestinationNavigationStr);
             System.out.println("***************************");
             System.out.println();
 
