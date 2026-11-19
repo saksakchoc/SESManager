@@ -237,7 +237,7 @@ public class Main {
         System.out.println(engineerListSize + "件見つかりました。");
         while(true) {
             System.out.println("閲覧したいエンジニアの行番号を選択してください。");
-            System.out.println("M-> メインメニュー / B-> エンジニア検索画面");
+            System.out.println("通常メニュー: M-> メインメニュー / B-> エンジニア検索画面");
             printEngineerList(engineers);
             String input = scanner.nextLine();
             switch (input) {
@@ -485,7 +485,7 @@ public class Main {
             // 使い方を表示
             System.out.println();
             System.out.println("***************************");
-            System.out.println("M: メインメニュー / B: " + backDestinationNavigationStr);
+            System.out.println("通常メニュー: M-> メインメニュー / B-> " + backDestinationNavigationStr);
             System.out.println("***************************");
             System.out.println();
 
