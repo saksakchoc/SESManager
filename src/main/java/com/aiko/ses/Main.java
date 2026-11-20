@@ -228,16 +228,16 @@ public class Main {
 
     private static NavigationResult displayEngineerListScreen(List<Engineer> engineers) {
         System.out.println("======== エンジニア一覧画面 ========");
-        int engineerListSize = engineers.size();
+        final int engineerListSize = engineers.size();
 
         if (engineerListSize == 0) {
             System.out.println("該当するエンジニアが見つかりません");
             return NavigationResult.SEARCH_ENGINEER;
         }
-
+        System.out.println(engineerListSize + "件見つかりました。");
         while(true) {
             System.out.println("閲覧したいエンジニアの行番号を選択してください。");
-            System.out.println("M-> メインメニュー / B-> エンジニア検索画面");
+            System.out.println("通常メニュー: M-> メインメニュー / B-> エンジニア検索画面");
             printEngineerList(engineers);
             String input = scanner.nextLine();
             switch (input) {
@@ -475,17 +475,17 @@ public class Main {
         });
         String backDestinationNavigationStr;
         switch (backDestinationNavigation){
-            case ENGINEER_LIST -> backDestinationNavigationStr = "(エンジニア一覧画面)";
-            case SEARCH_ENGINEER -> backDestinationNavigationStr = "(ID検索画面)";
-            case REGISTER_ENGINEER -> backDestinationNavigationStr = "(エンジニア登録画面)";
-            default -> backDestinationNavigationStr = "";
+            case ENGINEER_LIST -> backDestinationNavigationStr = "エンジニア一覧画面";
+            case SEARCH_ENGINEER -> backDestinationNavigationStr = "ID検索画面";
+            case REGISTER_ENGINEER -> backDestinationNavigationStr = "エンジニア登録画面";
+            default -> backDestinationNavigationStr = "呼び出し元画面";
         }
         // 入力を受け付ける
         while (true) {
             // 使い方を表示
             System.out.println();
             System.out.println("***************************");
-            System.out.println("M: メインメニュー / B: 呼び出し元" + backDestinationNavigationStr);
+            System.out.println("通常メニュー: M-> メインメニュー / B-> " + backDestinationNavigationStr);
             System.out.println("***************************");
             System.out.println();
 
