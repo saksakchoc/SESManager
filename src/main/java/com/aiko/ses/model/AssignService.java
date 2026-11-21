@@ -1,6 +1,7 @@
 package com.aiko.ses.model;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 public class AssignService {
     private final ParticipationStore participationStore;
@@ -8,11 +9,19 @@ public class AssignService {
         this.participationStore = participationStore;
     }
 
+    // エンジニアが参画する案件一覧を取得
     public List<Participation> getEngineerParticipation(Engineer e) {
         return this.participationStore.getParticipations().stream()
                 .filter(p -> p.getEngineer() == e)
                 .toList();
     }
+    // 案件に参加しているエンジニアを取得
+    public Optional<Participation> getProjectParticipation(Project project) {
+        return this.participationStore.getParticipations().stream()
+                .filter(p -> p.getProject() == project)
+                .findFirst();
+    }
+
     public boolean isAssignedForDate(Engineer e, LocalDate targetDate) {
         /* エンジニアが全期間で参画されている案件一覧を取得する */
         List<Participation> participationList = this.getEngineerParticipation(e);

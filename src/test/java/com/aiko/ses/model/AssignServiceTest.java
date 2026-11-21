@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -58,7 +59,35 @@ public class AssignServiceTest {
 
         assertEquals(0, as.getEngineerParticipation(e1).size());
     }
+    @Test
+    void getProjectParticipation_エンジニア一覧が取得できていること() {
+        EngineerStore es = new EngineerStore();
+        Engineer engineer = es.createEngineer("あいこ1", 45, "Java");
+        ProjectStore pjs = new ProjectStore();
+        Project project = pjs.createProject("A社基幹システム改修", 40, 60, LocalDate.parse("2026-04-01"), LocalDate.parse("2027-03-31"));
 
+        ParticipationStore participationStore = new ParticipationStore();
+        participationStore.createParticipation(engineer, project, LocalDate.parse("2026-04-01"), LocalDate.parse("2027-03-31"), 45);
+
+        AssignService as = new AssignService(participationStore);
+
+        Optional<Participation> optionalParticipation = as.getProjectParticipation(project);
+        assertFalse(optionalParticipation.isEmpty());
+        Participation participation = optionalParticipation.orElseThrow();
+        assertEquals(project, participation.getProject());
+    }
+    @Test
+    void getProjectParticipation_エンジニアの参画なし() {
+        ProjectStore pjs = new ProjectStore();
+        Project project = pjs.createProject("A社基幹システム改修", 40, 60, LocalDate.parse("2026-04-01"), LocalDate.parse("2027-03-31"));
+
+        ParticipationStore participationStore = new ParticipationStore();
+
+        AssignService as = new AssignService(participationStore);
+
+        Optional<Participation> optionalParticipation = as.getProjectParticipation(project);
+        assertTrue(optionalParticipation.isEmpty());
+    }
     @Test
     void isAssignedForDate_対象日付が参画開始日前日() {
         EngineerStore es = new EngineerStore();
