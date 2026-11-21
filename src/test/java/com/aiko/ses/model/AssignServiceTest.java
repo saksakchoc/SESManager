@@ -89,6 +89,22 @@ public class AssignServiceTest {
         assertTrue(optionalParticipation.isEmpty());
     }
     @Test
+    void getProjectParticipation_別案件の参画のみあり() {
+        EngineerStore es = new EngineerStore();
+        Engineer engineer = es.createEngineer("あいこ1", 45, "Java");
+        ProjectStore pjs = new ProjectStore();
+        Project project1 = pjs.createProject("A社基幹システム改修", 40, 60, LocalDate.parse("2026-04-01"), LocalDate.parse("2027-03-31"));
+        Project project2 = pjs.createProject("B社基幹システム改修", 40, 60, LocalDate.parse("2026-04-01"), LocalDate.parse("2027-03-31"));
+
+        ParticipationStore participationStore = new ParticipationStore();
+        participationStore.createParticipation(engineer, project2, LocalDate.parse("2026-04-01"), LocalDate.parse("2027-03-31"), 45);
+
+        AssignService as = new AssignService(participationStore);
+
+        Optional<Participation> optionalParticipation = as.getProjectParticipation(project1);
+        assertTrue(optionalParticipation.isEmpty());
+    }
+    @Test
     void isAssignedForDate_対象日付が参画開始日前日() {
         EngineerStore es = new EngineerStore();
         Engineer e = es.createEngineer("あいこ1", 45, "Java");
