@@ -711,7 +711,7 @@ public class Main {
                     System.out.println("1 / 2 / 3 のいずれかを入力してください。");
                     continue;
             }
-            if (navigationResult != NavigationResult.SEARCH_ENGINEER) {
+            if (navigationResult != NavigationResult.SEARCH_PROJECT) {
                 return navigationResult;
             }
         }
@@ -901,7 +901,7 @@ public class Main {
             System.out.println("参画中の案件がありません");
         }
         participations.forEach(participation -> {
-            Project engineer = participation.getProject();
+            Engineer engineer = participation.getEngineer();
             System.out.println("【 案件名: " + engineer.getName() + " 】");
             System.out.println("　　案件ID: " + engineer.getId());
             System.out.println("　　契約単価: " + participation.getContractPrice());
