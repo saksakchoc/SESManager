@@ -88,7 +88,7 @@ public class Main {
                     nextFeaturePage = registerProject();
                     break;
                 case SEARCH_PROJECT:
-                    nextFeaturePage = searchProject();
+                    nextFeaturePage = searchProjectScreen();
                     break;
                 default:
                     return;
@@ -421,7 +421,7 @@ public class Main {
                                     System.out.println("日付を yyyy-MM-dd 形式で入力してください。");
                                     continue;
                                 } catch (IllegalArgumentException e) {
-                                    System.out.println("期間開始日 < 期間終了日となるように入力してください。");
+                                    System.out.println("期間開始日 <= 期間終了日となるように入力してください。");
                                     continue;
                                 }
                         }
@@ -685,17 +685,34 @@ public class Main {
             return NavigationResult.REGISTER_PROJECT;
         }
     }
-    private static NavigationResult searchProject() {
+    private static NavigationResult searchProjectScreen() {
         System.out.println("======== 案件検索画面 ========");
         while(true) {
+            NavigationResult navigationResult;
+            System.out.println("検索方法を指定してください。");
+            System.out.println("1-> 特殊検索条件指定 / 2-> ID検索 / 3-> 全件表示");
             System.out.println("通常メニュー: M-> メインメニュー / B-> メインメニュー");
             String input = scanner.nextLine();
             switch (input) {
+                case "1":
+                    navigationResult = searchProjectsBySkillAndRecruitingStatus();
+                    break;
+                case "2":
+                    navigationResult = searchProjectByIdScreen();
+                    break;
+                case "3":
+                    navigationResult = displayProjectListScreen(projectStore.getProjects());
+                    break;
                 case "M":
                 case "B":
                     // MかBが入力されたらメインメニューに戻る
                     return NavigationResult.MAIN_MENU;
                 default:
+                    System.out.println("1 / 2 / 3 のいずれかを入力してください。");
+                    continue;
+            }
+            if (navigationResult != NavigationResult.SEARCH_ENGINEER) {
+                return navigationResult;
             }
         }
     }
@@ -759,7 +776,7 @@ public class Main {
                         int projectId = Integer.parseInt(input);
                         Project project = projectStore.getProject(projectId);
                         if (project == null) {
-                            throw new IllegalArgumentException("入力されたIDに該当する案件がいません。");
+                            throw new IllegalArgumentException("入力されたIDに該当する案件がありません。");
                         }
                         NavigationResult navigationResult =  displayProjectDetails(project, NavigationResult.SEARCH_PROJECT);
                         if (navigationResult == NavigationResult.MAIN_MENU) {
@@ -771,15 +788,14 @@ public class Main {
                         // 整数に変換できない場合はループに戻る
                         System.out.println("入力できる範囲の整数を入力してください。");
                     } catch (IllegalArgumentException e) {
-                        System.out.println("入力されたIDに該当する案件がいません。");
+                        System.out.println("入力されたIDに該当する案件がありません。");
                     }
 
             }
         }
     }
-    private static NavigationResult searchProjectsBySkillAndAssignStatus() {
-        List<Project> projects = projectStore.getProjects();
-        List<Project> filteredProjectsBySkills = new ArrayList<>();
+    private static NavigationResult searchProjectsBySkillAndRecruitingStatus() {
+        List<Project> filteredProjectsBySkills;
 
         System.out.println("スキルセット、参画状態を順番にお聞きします。");
         System.out.println("まずはスキルセットについて入力してください。");
@@ -813,24 +829,21 @@ public class Main {
                         }
                         System.out.println("スキルを指定しました: " + skillsListByComma);
 
-
-                        for (Project project: projects) {
-                            if (assignService.isAvailableBySkills(project, skills)) {
-                                filteredProjectsBySkills.add(project);
-                            }
-                        }
                     } else {
                         System.out.println("スキルを指定しません");
                     }
                 }
-                // 入力なし／カンマのみが入力されたらスキルを登録せず終了
-                if (skills.isEmpty()) {
-                    filteredProjectsBySkills.addAll(projects);
-                }
         }
+
+        // ここでskillsを使ってProjectStoreからデータを引っこ抜く
+        filteredProjectsBySkills = projectStore.getProjects().stream().filter(
+            project ->
+                    project.getSkills().containsAll(skills)
+        ).toList();
+
         List<Project> filteredProjectsByAssignedStatus;
-        System.out.println("参画状態の検索方法を指定してください。");
-        System.out.println("1：現在未参画 / 2: 日付指定未参画 / 3: 参画状態不問");
+        System.out.println("募集ステータスについて指定してください。");
+        System.out.println("1： 募集中 / 2: 募集状態不問");
         System.out.println("通常メニュー: M-> メインメニュー / B-> 案件検索画面");
         while (true) {
             String assignedStatusInput = scanner.nextLine();
@@ -840,68 +853,14 @@ public class Main {
                 case "B":
                     return NavigationResult.SEARCH_PROJECT;
                 case "1":
-                    /* 本日日付に参画情報がある案件を除く */
-                    filteredProjectsByAssignedStatus = filteredProjectsBySkills.stream().filter(project -> !assignService.isAssignedForDate(project, LocalDate.now())).toList();
+                    /* 募集中の案件だけ取得する */
+                    filteredProjectsByAssignedStatus = filteredProjectsBySkills.stream().filter(Project::isRecruiting).toList();
                     break;
                 case "2":
-                    /* 対象期間に参画情報がある案件を除く */
-                    LocalDate startDate;
-                    while (true) {
-                        System.out.println("対象期間開始日を入力してください。(形式: yyyy-mm-dd)");
-                        System.out.println("通常メニュー: M-> メインメニュー / B-> 案件検索画面");
-                        String startDateInput = scanner.nextLine();
-                        switch (startDateInput) {
-                            case "M":
-                                return NavigationResult.MAIN_MENU;
-                            case "B":
-                                return NavigationResult.SEARCH_PROJECT;
-                            default:
-                                try {
-                                    startDate = LocalDate.parse(startDateInput);
-                                    break;
-                                } catch (DateTimeParseException e) {
-                                    System.out.println("日付を yyyy-MM-dd 形式で入力してください。");
-                                    continue;
-                                }
-                        }
-                        break;
-                    }
-                    LocalDate endDate;
-                    while (true) {
-                        System.out.println("対象期間終了日を入力してください。(形式: yyyy-MM-dd)");
-                        System.out.println("通常メニュー: M-> メインメニュー / B-> 案件検索画面");
-                        String endDateInput = scanner.nextLine();
-                        switch (endDateInput) {
-                            case "M":
-                                return NavigationResult.MAIN_MENU;
-                            case "B":
-                                return NavigationResult.SEARCH_PROJECT;
-                            default:
-                                try {
-                                    endDate = LocalDate.parse(endDateInput);
-                                    if (startDate.isAfter(endDate)) {
-                                        throw new IllegalArgumentException("startDate>EndDateとなっています");
-                                    }
-                                    LocalDate finalStartDate = startDate;
-                                    LocalDate finalEndDate = endDate;
-                                    filteredProjectsByAssignedStatus = filteredProjectsBySkills.stream().filter(project -> assignService.isAvailableByPeriod(project, finalStartDate, finalEndDate)).toList();
-                                    break;
-                                } catch (DateTimeParseException e) {
-                                    System.out.println("日付を yyyy-MM-dd 形式で入力してください。");
-                                    continue;
-                                } catch (IllegalArgumentException e) {
-                                    System.out.println("期間開始日 < 期間終了日となるように入力してください。");
-                                    continue;
-                                }
-                        }
-                        break;
-                    }
-                    break;
-                case "3":
+                    /* 前の段階での検索結果を引き継ぐ */
                     filteredProjectsByAssignedStatus = filteredProjectsBySkills;
                     break;
                 default:
-                    System.out.println("1 / 2 / 3 のいずれかを入力してください。");
                     continue;
             }
             System.out.println();
@@ -935,7 +894,7 @@ public class Main {
         System.out.println("　　　参画中案件情報");
         System.out.println("========================");
         List<Participation> participations =
-                assignService.getEngineerParticipation(project).stream()
+                assignService.getProjectParticipation(project).stream()
                         .sorted(Comparator.comparing(Participation::getStartDate))
                         .toList();
         if (participations.isEmpty()) {
