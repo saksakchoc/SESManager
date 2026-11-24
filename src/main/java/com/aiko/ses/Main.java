@@ -902,8 +902,8 @@ public class Main {
         }
         participations.forEach(participation -> {
             Engineer engineer = participation.getEngineer();
-            System.out.println("【 案件名: " + engineer.getName() + " 】");
-            System.out.println("　　案件ID: " + engineer.getId());
+            System.out.println("【 エンジニア名: " + engineer.getName() + " 】");
+            System.out.println("　 エンジニアID: " + engineer.getId());
             System.out.println("　　契約単価: " + participation.getContractPrice());
             System.out.println("　　開始日　: " + participation.getStartDate());
             System.out.println("　　終了日　: " + participation.getEndDate());
