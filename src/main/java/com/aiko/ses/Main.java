@@ -891,22 +891,26 @@ public class Main {
         System.out.println("スキル　　　: " + skillsListByComma);
         System.out.println("ステータス　　　: " + (project.isRecruiting()? "募集中" : "募集終了"));
         System.out.println("========================");
-        System.out.println("　　　参画中案件情報");
+        System.out.println("　　　参画中エンジニア情報");
         System.out.println("========================");
         List<Participation> participations =
                 assignService.getProjectParticipation(project).stream()
                         .sorted(Comparator.comparing(Participation::getStartDate))
                         .toList();
         if (participations.isEmpty()) {
-            System.out.println("参画中の案件がありません");
+            System.out.println("参画中のエンジニアがいません");
         }
         participations.forEach(participation -> {
+            List<String> engineerSkills = participation.getEngineer().getSkills();
+            String engineerSkillsListByComma = engineerSkills.isEmpty() ? "なし" : String.join(", ", engineerSkills);
+
             Engineer engineer = participation.getEngineer();
             System.out.println("【 エンジニア名: " + engineer.getName() + " 】");
             System.out.println("　 エンジニアID: " + engineer.getId());
             System.out.println("　　契約単価: " + participation.getContractPrice());
             System.out.println("　　開始日　: " + participation.getStartDate());
             System.out.println("　　終了日　: " + participation.getEndDate());
+            System.out.println("　　スキル　: " + engineerSkillsListByComma);
             System.out.println();
         });
         String backDestinationNavigationStr;
