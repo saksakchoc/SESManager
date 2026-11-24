@@ -8,9 +8,10 @@ import java.util.*;
 public class Main {
     private enum NavigationResult {
         MAIN_MENU,
+        ENGINEER_LIST,
         REGISTER_ENGINEER,
         SEARCH_ENGINEER,
-        ENGINEER_LIST,
+        PROJECT_LIST,
         REGISTER_PROJECT,
         SEARCH_PROJECT,
     }
@@ -80,11 +81,14 @@ public class Main {
                 case SEARCH_ENGINEER:
                     nextFeaturePage = searchEngineerScreen();
                     break;
+                case PROJECT_LIST:
+                    nextFeaturePage = displayProjectListScreen(projectStore.getProjects());
+                    break;
                 case REGISTER_PROJECT:
                     nextFeaturePage = registerProject();
                     break;
                 case SEARCH_PROJECT:
-                    nextFeaturePage = searchProject();
+                    nextFeaturePage = searchProjectScreen();
                     break;
                 default:
                     return;
@@ -417,7 +421,7 @@ public class Main {
                                     System.out.println("日付を yyyy-MM-dd 形式で入力してください。");
                                     continue;
                                 } catch (IllegalArgumentException e) {
-                                    System.out.println("期間開始日 < 期間終了日となるように入力してください。");
+                                    System.out.println("期間開始日 <= 期間終了日となるように入力してください。");
                                     continue;
                                 }
                         }
@@ -501,28 +505,436 @@ public class Main {
     }
     private static NavigationResult registerProject() {
         System.out.println("======== 案件登録画面 ========");
+        System.out.println("案件名, 単価下限, 単価上限, 開始日, 終了日, スキルを順番に聞いていきます");
+        System.out.println("まずは案件名を教えてください");
+        // 案件名振り分け処理
+        String projectName;
+        while (true) {
+            String projectNameInput = scanner.nextLine();
+            switch (projectNameInput) {
+                case "":
+                    // エラーメッセージ(使い方を表示)
+                    System.out.println();
+                    System.out.println("***************************");
+                    System.out.println(" 案件名を入力してください");
+                    System.out.println("***************************");
+                    System.out.println();
+                    continue; // 無限ループ
+                case "M":
+                case "B":
+                    return NavigationResult.MAIN_MENU;
+                default:
+                    projectName = projectNameInput;
+                    break;
+            }
+            // 案件名が入力されたときだけループを抜ける
+            break;
+        }
+        System.out.println("案件名が入力されました: " + projectName);
+        // 単価振り分け処理
+        int minPrice;
+        while (true) {
+            System.out.println("単価下限を教えてください(1以上の整数)");
+            String minPriceInput = scanner.nextLine();
+            if (Objects.equals(minPriceInput, "M") || Objects.equals(minPriceInput, "B")) {
+                return NavigationResult.MAIN_MENU;
+            }
+            try {
+                int inputNum = Integer.parseInt(minPriceInput);
+                // 正の整数なら単価として処理する
+                if (inputNum > 0) {
+                    minPrice = inputNum;
+                    break;
+                }
+                System.out.println("1以上の数値を入力してください");
+                // 0ならループに戻る
+            } catch (NumberFormatException e) {
+                // 整数に変換できない場合はループに戻る
+                System.out.println("入力できる範囲の整数を入力してください");
+            }
+        }
+        System.out.println("単価下限が入力されました: " + minPrice + "です");
+        // 単価振り分け処理
+        int maxPrice;
+        while (true) {
+            System.out.println("単価上限を教えてください(1以上の整数)");
+            String maxPriceInput = scanner.nextLine();
+            if (Objects.equals(maxPriceInput, "M") || Objects.equals(maxPriceInput, "B")) {
+                return NavigationResult.MAIN_MENU;
+            }
+            try {
+                int inputNum = Integer.parseInt(maxPriceInput);
+                // 正の整数でない
+                if (inputNum <= 0) {
+                    System.out.println("1以上の数値を入力してください");
+                    throw new IllegalArgumentException("入力値が自然数でありません");
+                }
+                if (inputNum < minPrice) {
+                    System.out.println("単価下限以上の数値を入力してください");
+                    throw new IllegalArgumentException("入力値が単価下限未満です");
+                }
+
+                // 正の整数なら単価として処理する
+                maxPrice = inputNum;
+                break;
+            } catch (NumberFormatException e) {
+                // 整数に変換できない場合はループに戻る
+                System.out.println("自然数を入力してください");
+            } catch (IllegalArgumentException e) {
+                System.out.println("単価下限 <= 単価上限となるように、自然数を入力してください");
+            }
+        }
+        System.out.println("単価上限が入力されました: " + maxPrice + "です");
+
+        // 開始日振り分け処理
+        LocalDate startDate;
+        while (true) {
+            System.out.println("案件開始日を入力してください。(形式: yyyy-mm-dd)");            String startDateInput = scanner.nextLine();
+            switch (startDateInput) {
+                case "M":
+                case "B":
+                    return NavigationResult.MAIN_MENU;
+                default:
+                    try {
+                        startDate = LocalDate.parse(startDateInput);
+                        break;
+                    } catch (DateTimeParseException e) {
+                        System.out.println("日付を yyyy-MM-dd 形式で入力してください。");
+                        continue;
+                    }
+            }
+            break;
+        }
+        LocalDate endDate;
+        while (true) {
+            System.out.println("対象期間終了日を入力してください。(形式: yyyy-MM-dd)");
+            String endDateInput = scanner.nextLine();
+            switch (endDateInput) {
+                case "M":
+                case "B":
+                    return NavigationResult.MAIN_MENU;
+                default:
+                    try {
+                        endDate = LocalDate.parse(endDateInput);
+                        if (startDate.isAfter(endDate)) {
+                            throw new IllegalArgumentException("startDate>EndDateとなっています");
+                        }
+                        break;
+                    } catch (DateTimeParseException e) {
+                        System.out.println("日付を yyyy-MM-dd 形式で入力してください。");
+                        continue;
+                    } catch (IllegalArgumentException e) {
+                        System.out.println("期間開始日 < 期間終了日となるように入力してください。");
+                        continue;
+                    }
+            }
+            break;
+        }
+        // スキル振り分け処理
+        List<String> inputSkills = new ArrayList<>();
+        List<String> skills = new ArrayList<>();
+        System.out.println("スキルを教えてください(カンマ区切り)");
+        System.out.println("スキルを登録しない場合は入力無しでOK");
+        String skillsInputStr = scanner.nextLine();
+        if (Objects.equals(skillsInputStr, "M") || Objects.equals(skillsInputStr, "B")) {
+            System.out.println("メインメニューに戻ります");
+            return NavigationResult.MAIN_MENU;
+        }
+        StringBuilder skillsListByComma = new StringBuilder();
+        if (!Objects.equals(skillsInputStr, "")) {
+            // スキルが入力されたたら配列にいれる
+            Collections.addAll(inputSkills, skillsInputStr.split(","));
+            if (!inputSkills.isEmpty()) {
+                for (String inputSkill : inputSkills) {
+                    String skill = inputSkill.trim();
+                    if (!skill.isEmpty()) {
+                        skills.add(skill);
+                    }
+                }
+                if (!skills.isEmpty()) {
+                    for (int i = 0; i < skills.size(); i++) {
+                        skillsListByComma.append(skills.get(i));
+                        if (i < skills.size() - 1) {
+                            skillsListByComma.append(",");
+                        }
+                    }
+                    System.out.println("スキルを登録しました: " + skillsListByComma);
+                }
+            }
+        }
+        if (skills.isEmpty()) {
+            // 空文字、空白またはカンマのみの入力ならスキルを登録しない
+            System.out.println("スキルを登録しません");
+        }
+        System.out.println("案件登録内容を受け取りました。");
+        System.out.println("案件名: " + projectName);
+        System.out.println("単価下限: " + minPrice);
+        System.out.println("単価上限: " + maxPrice);
+        System.out.println("開始日: " + startDate);
+        System.out.println("終了日: " + endDate);
+        System.out.println("スキル: "
+                + (skills.isEmpty() ? "なし" : skillsListByComma));
+        System.out.println("こちらの内容で登録してよろしいですか？");
+        if (askForConfirmation()) {
+            // 登録メイン処理
+            // skillsはStringに変換して渡す
+            Project project = projectStore.createProject(projectName, minPrice, maxPrice, startDate, endDate, skills.toArray(new String[0]));
+            System.out.println("案件を登録しました。案件詳細画面に移動します");
+            return displayProjectDetails(project, NavigationResult.PROJECT_LIST);
+        } else {
+            return NavigationResult.REGISTER_PROJECT;
+        }
+    }
+    private static NavigationResult searchProjectScreen() {
+        System.out.println("======== 案件検索画面 ========");
         while(true) {
+            NavigationResult navigationResult;
+            System.out.println("検索方法を指定してください。");
+            System.out.println("1-> 特殊検索条件指定 / 2-> ID検索 / 3-> 全件表示");
             System.out.println("通常メニュー: M-> メインメニュー / B-> メインメニュー");
             String input = scanner.nextLine();
             switch (input) {
+                case "1":
+                    navigationResult = searchProjectsBySkillAndRecruitingStatus();
+                    break;
+                case "2":
+                    navigationResult = searchProjectByIdScreen();
+                    break;
+                case "3":
+                    navigationResult = displayProjectListScreen(projectStore.getProjects());
+                    break;
                 case "M":
                 case "B":
                     // MかBが入力されたらメインメニューに戻る
                     return NavigationResult.MAIN_MENU;
                 default:
+                    System.out.println("1 / 2 / 3 のいずれかを入力してください。");
+                    continue;
+            }
+            if (navigationResult != NavigationResult.SEARCH_PROJECT) {
+                return navigationResult;
             }
         }
     }
-    private static NavigationResult searchProject() {
-        System.out.println("======== 案件検索画面 ========");
+    private static NavigationResult displayProjectListScreen(List<Project> projects) {
+        System.out.println("======== 案件一覧画面 ========");
+        final int projectListSize = projects.size();
+
+        if (projectListSize == 0) {
+            System.out.println("該当する案件が見つかりません");
+            return NavigationResult.SEARCH_PROJECT;
+        }
+        System.out.println(projectListSize + "件見つかりました。");
         while(true) {
-            System.out.println("通常メニュー: M-> メインメニュー / B-> メインメニュー");
+            System.out.println("閲覧したい案件の行番号を選択してください。");
+            System.out.println("通常メニュー: M-> メインメニュー / B-> 案件検索画面");
+            printProjectList(projects);
             String input = scanner.nextLine();
             switch (input) {
                 case "M":
+                    return NavigationResult.MAIN_MENU;
                 case "B":
                     // MかBが入力されたらメインメニューに戻る
+                    return NavigationResult.SEARCH_PROJECT;
+                default:
+                    try {
+                        int rowNumber = Integer.parseInt(input);
+                        if (rowNumber <= 0 || rowNumber > projectListSize) {
+                            throw new IllegalArgumentException("入力された数値の範囲が、案件の人数より多い、または0以下です");
+                        }
+                        Project selectedProject = projects.get(rowNumber - 1);
+                        NavigationResult navigationResult = displayProjectDetails(selectedProject, NavigationResult.PROJECT_LIST);
+                        if (navigationResult != NavigationResult.PROJECT_LIST) {
+                            return navigationResult;
+                        }
+                    } catch (IllegalArgumentException e) {
+                        System.out.println("行番号(1～" + projectListSize + "の整数、またはM/Bを入力してください");
+                    }
+            }
+        }
+    }
+    private static void printProjectList(List<Project> projects) {
+        for (int i=0; i<projects.size(); i++) {
+            Project project = projects.get(i);
+            System.out.print(i+1 + " : ");
+            System.out.print(project.getName());
+            System.out.println();
+        }
+    }
+    private static NavigationResult searchProjectByIdScreen() {
+        while(true) {
+            System.out.println("案件IDを入力してください。");
+            System.out.println("通常メニュー: M-> メインメニュー / B-> 案件検索画面");
+            String input = scanner.nextLine();
+            switch(input) {
+                case "M":
                     return NavigationResult.MAIN_MENU;
+                case "B":
+                    return NavigationResult.SEARCH_PROJECT;
+                default:
+                    try {
+                        int projectId = Integer.parseInt(input);
+                        Project project = projectStore.getProject(projectId);
+                        if (project == null) {
+                            throw new IllegalArgumentException("入力されたIDに該当する案件がありません。");
+                        }
+                        NavigationResult navigationResult =  displayProjectDetails(project, NavigationResult.SEARCH_PROJECT);
+                        if (navigationResult == NavigationResult.MAIN_MENU) {
+                            return navigationResult;
+                        }
+                        break;
+
+                    } catch (NumberFormatException e) {
+                        // 整数に変換できない場合はループに戻る
+                        System.out.println("入力できる範囲の整数を入力してください。");
+                    } catch (IllegalArgumentException e) {
+                        System.out.println("入力されたIDに該当する案件がありません。");
+                    }
+
+            }
+        }
+    }
+    private static NavigationResult searchProjectsBySkillAndRecruitingStatus() {
+        List<Project> filteredProjectsBySkills;
+
+        System.out.println("スキルセット、参画状態を順番にお聞きします。");
+        System.out.println("まずはスキルセットについて入力してください。");
+        System.out.println("スキルを複数指定したい場合、カンマ区切りで入力してください。");
+        System.out.println("スキルを指定しない場合、入力せずEnterを押してください。");
+        System.out.println("通常メニュー: M-> メインメニュー / B-> 案件検索画面");
+        String inputSkillsStr = scanner.nextLine();
+        List<String> inputSkills = new ArrayList<>();
+        List<String> skills = new ArrayList<>();
+        switch (inputSkillsStr) {
+            case "M":
+                return NavigationResult.MAIN_MENU;
+            case "B":
+                return NavigationResult.SEARCH_PROJECT;
+            default:
+                Collections.addAll(inputSkills, inputSkillsStr.split(","));
+                if (!inputSkills.isEmpty()) {
+                    for (String inputSkill : inputSkills) {
+                        String skill = inputSkill.trim();
+                        if (!skill.isEmpty()) {
+                            skills.add(skill);
+                        }
+                    }
+                    if (!skills.isEmpty()) {
+                        StringBuilder skillsListByComma = new StringBuilder();
+                        for (int i = 0; i < skills.size(); i++) {
+                            skillsListByComma.append(skills.get(i));
+                            if (i < skills.size() - 1) {
+                                skillsListByComma.append(",");
+                            }
+                        }
+                        System.out.println("スキルを指定しました: " + skillsListByComma);
+
+                    } else {
+                        System.out.println("スキルを指定しません");
+                    }
+                }
+        }
+
+        // ここでskillsを使ってProjectStoreからデータを引っこ抜く
+        filteredProjectsBySkills = projectStore.getProjects().stream().filter(
+            project ->
+                    project.getSkills().containsAll(skills)
+        ).toList();
+
+        List<Project> filteredProjectsByAssignedStatus;
+        System.out.println("募集ステータスについて指定してください。");
+        System.out.println("1： 募集中 / 2: 募集状態不問");
+        System.out.println("通常メニュー: M-> メインメニュー / B-> 案件検索画面");
+        while (true) {
+            String assignedStatusInput = scanner.nextLine();
+            switch (assignedStatusInput) {
+                case "M":
+                    return NavigationResult.MAIN_MENU;
+                case "B":
+                    return NavigationResult.SEARCH_PROJECT;
+                case "1":
+                    /* 募集中の案件だけ取得する */
+                    filteredProjectsByAssignedStatus = filteredProjectsBySkills.stream().filter(Project::isRecruiting).toList();
+                    break;
+                case "2":
+                    /* 前の段階での検索結果を引き継ぐ */
+                    filteredProjectsByAssignedStatus = filteredProjectsBySkills;
+                    break;
+                default:
+                    continue;
+            }
+            System.out.println();
+            System.out.println("検索結果を表示します。");
+            return displayProjectListScreen(filteredProjectsByAssignedStatus);
+        }
+    }
+    private static NavigationResult displayProjectDetails(Project project, NavigationResult backDestinationNavigation) {
+        System.out.println("========================");
+        System.out.println();
+        System.out.println("=    案件詳細画面　  =");
+        System.out.println();
+        System.out.println("========================");
+        System.out.println();
+
+        List<String> skills = project.getSkills();
+        String skillsListByComma = skills.isEmpty() ? "なし" : String.join(", ", skills);
+
+        System.out.println("========================");
+        System.out.println("　　　　案件情報");
+        System.out.println("========================");
+        System.out.println("案件ID: " + project.getId());
+        System.out.println("案件名: " + project.getName());
+        System.out.println("開始日　　　　: " + project.getStartDate());
+        System.out.println("終了日　　　　: " + project.getEndDate());
+        System.out.println("単価下限　　　　: " + project.getMinPrice());
+        System.out.println("単価上限　　　　: " + project.getMaxPrice());
+        System.out.println("スキル　　　: " + skillsListByComma);
+        System.out.println("ステータス　　　: " + (project.isRecruiting()? "募集中" : "募集終了"));
+        System.out.println("========================");
+        System.out.println("　　　参画中エンジニア情報");
+        System.out.println("========================");
+        List<Participation> participations =
+                assignService.getProjectParticipation(project).stream()
+                        .sorted(Comparator.comparing(Participation::getStartDate))
+                        .toList();
+        if (participations.isEmpty()) {
+            System.out.println("参画中のエンジニアがいません");
+        }
+        participations.forEach(participation -> {
+            List<String> engineerSkills = participation.getEngineer().getSkills();
+            String engineerSkillsListByComma = engineerSkills.isEmpty() ? "なし" : String.join(", ", engineerSkills);
+
+            Engineer engineer = participation.getEngineer();
+            System.out.println("【 エンジニア名: " + engineer.getName() + " 】");
+            System.out.println("　 エンジニアID: " + engineer.getId());
+            System.out.println("　　契約単価: " + participation.getContractPrice());
+            System.out.println("　　開始日　: " + participation.getStartDate());
+            System.out.println("　　終了日　: " + participation.getEndDate());
+            System.out.println("　　スキル　: " + engineerSkillsListByComma);
+            System.out.println();
+        });
+        String backDestinationNavigationStr;
+        switch (backDestinationNavigation){
+            case PROJECT_LIST -> backDestinationNavigationStr = "案件一覧画面";
+            case SEARCH_PROJECT -> backDestinationNavigationStr = "ID検索画面";
+            case REGISTER_PROJECT -> backDestinationNavigationStr = "案件登録画面";
+            default -> backDestinationNavigationStr = "呼び出し元画面";
+        }
+        // 入力を受け付ける
+        while (true) {
+            // 使い方を表示
+            System.out.println();
+            System.out.println("***************************");
+            System.out.println("通常メニュー: M-> メインメニュー / B-> " + backDestinationNavigationStr);
+            System.out.println("***************************");
+            System.out.println();
+
+            String input = scanner.nextLine();
+            switch (input) {
+                case "M":
+                    return NavigationResult.MAIN_MENU;
+                case "B":
+                    return backDestinationNavigation;
                 default:
             }
         }
